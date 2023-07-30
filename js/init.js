@@ -50,7 +50,7 @@ customFileInput.addEventListener('change', function () {
 function patch() {
   log("");
   const file = useDefaultFirmwareCheckbox.checked
-    ? fetch('/fw/k5_v2.01.26_publish.bin')
+    ? fetch('fw/k5_v2.01.26_publish.bin')
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
