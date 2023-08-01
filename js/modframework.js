@@ -225,3 +225,35 @@ function addInputField(parentDiv, labelText, defaultValue) {
 
   return input; // Return the input element
 }
+
+/**
+ * Adds a radio input field to a parent div with an id, name, value and label.
+ *
+ * @param {HTMLElement} parentDiv - The parent div to which the input field will be added. Usually this.modSpecificDiv
+ * @param {string} labelText - The label text (title) for the input field.
+ * @param {string} id - The id is needed to link radio button and label, choose any unique id. 
+ * @param {string} name - The name of the radio button needs to be the same for all radio buttons in a mutually exclusive group. 
+ * @returns {HTMLInputElement} - The created input element, assign it to a constant for later use. 
+ */
+function addRadioButton(parentDiv, labelText, id, name) {
+  const formCheckDiv = document.createElement("div");
+  formCheckDiv.classList.add("form-check");
+
+  const inputElement = document.createElement("input");
+  inputElement.classList.add("form-check-input");
+  inputElement.type = "radio";
+  inputElement.name = name;
+  inputElement.id = id;
+
+  const labelElement = document.createElement("label");
+  labelElement.classList.add("form-check-label");
+  labelElement.htmlFor = id;
+  labelElement.textContent = labelText;
+
+  formCheckDiv.appendChild(inputElement);
+  formCheckDiv.appendChild(labelElement);
+
+  parentDiv.appendChild(formCheckDiv);
+
+  return inputElement;
+}
