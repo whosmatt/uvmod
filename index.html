@@ -23,7 +23,7 @@
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-  <!-- animated gradient background-->
+  <!-- animated gradient background and other animations-->
   <style>
     html {
       height: 100%;
@@ -57,6 +57,37 @@
       position: absolute;
       top: 0;
     }
+
+    @keyframes fadeInFromTop {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-body {
+      animation: fadeInFromTop 1s ease-in-out;
+    }
+
+    @keyframes fadeInFromBottom {
+      from {
+        opacity: 0;
+        transform: translateY(+10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    body {
+      animation: fadeInFromBottom 0.7s ease-out;
+    }
   </style>
 </head>
 
@@ -87,8 +118,8 @@
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 id="logo" class="h3 mb-0 text-white" style="text-shadow: 0px 0px 5px #ffffffa6; font-size: 3em;">UVMOD
             </h1>
-            <button class="d-none d-sm-inline-block btn btn-sm btn-light shadow-lg" type="button"
-              data-toggle="collapse" data-target="#instructions">&nbsp;Show Instructions&nbsp;</button>
+            <button class="d-none d-sm-inline-block btn btn-sm btn-light shadow-lg" type="button" data-toggle="collapse"
+              data-target="#instructions">&nbsp;Show Instructions&nbsp;</button>
           </div>
 
           <div id="instructions" class="row collapse">
@@ -99,29 +130,39 @@
                 </div>
                 <div class="card-body">
                   <h2 class="mb-4">UVMOD</h2>
-                  <p>This tool lets you create customized firmware for the Quansheng UV-K5, UV-K6, UV-K5(8), and UV-5R Plus handheld radios. To flash the firmware, you need a compatible programming cable and the necessary drivers.</p>
-                
+                  <p>This tool lets you create customized firmware for the Quansheng UV-K5, UV-K6, UV-K5(8), and UV-5R
+                    Plus handheld radios. To flash the firmware, you need a compatible programming cable and the
+                    necessary drivers.</p>
+
                   <h3 class="mt-4">Usage</h3>
                   <ol>
-                    <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage instructions.</li>
-                    <li>On the right side, select your radio model. The upgrade tool will reject the firmware if the wrong model is selected.</li>
-                    <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
+                    <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage
+                      instructions.</li>
+                    <li>On the right side, select your radio model. The upgrade tool will reject the firmware if the
+                      wrong model is selected.</li>
+                    <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you
+                      get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
                     <li>Click "Save" to download the finished firmware file.</li>
                   </ol>
-                
+
                   <h3 class="mt-4">Flashing</h3>
-                  <p>If you use Windows, you can use the official updater tool. You can download it directly from UVMOD using the link in the console window.</p>
+                  <p>If you use Windows, you can use the official updater tool. You can download it directly from UVMOD
+                    using the link in the console window.</p>
                   <ol>
-                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. In the device manager, it should show up as a com port.</li>
+                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. In
+                      the device manager, it should show up as a com port.</li>
                     <li>Start the updater tool, select the com port, and click connect.</li>
                     <li>Load the customized firmware as the program file.</li>
-                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the radio stays dark. Your radio is now in bootloader mode.</li>
-                    <li>Connect the programming cable to the radio. The "Update" button in the updater tool should now become available.</li>
+                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and
+                      turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the
+                      radio stays dark. Your radio is now in bootloader mode.</li>
+                    <li>Connect the programming cable to the radio. The "Update" button in the updater tool should now
+                      become available.</li>
                     <li>Click update and wait for the tool to finish.</li>
                     <li>All done, all your settings should still all be intact.</li>
                   </ol>
                 </div>
-                
+
               </div>
             </div>
           </div>
