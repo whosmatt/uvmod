@@ -70,9 +70,15 @@ function patch() {
     .then((encoded_firmware) => {
       const unpacked_firmware = unpack(encoded_firmware);
 
-      const versionInfoString = new TextDecoder().decode(versionInfo.subarray(0, versionInfo.indexOf(0)));
-      log(`Detected firmware version: ${versionInfoString}`);
+      log(`Detected firmware version: ${new TextDecoder().decode(versionInfo.subarray(0, versionInfo.indexOf(0)))}`);
+      
+      // Adjust firmware version to allow cross flashing
+      const newVersionChar = document.getElementById("firmwareVersionSelect").value;
+      const newVersionCharCode = newVersionChar.charCodeAt(0);
+      versionInfo[0] = newVersionCharCode;
+      log(`Modified firmware version: ${new TextDecoder().decode(versionInfo.subarray(0, versionInfo.indexOf(0)))}`);
 
+      // Apply mods to unpacked firmware
       const patched_firmware = applyMods(unpacked_firmware);
 
       // Check size
