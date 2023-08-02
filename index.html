@@ -8,7 +8,8 @@
   <meta property="og:title" content=UVMOD - Online Quansheng Firmware Patcher>
   <meta property="og:site_name" content=UVMOD>
   <meta property="og:url" content=https://whosmatt.github.io/uvmod />
-  <meta property="og:description" content="Web-based tool to generate customizable modded firmware for the various Quansheng handheld radios.">
+  <meta property="og:description"
+    content="Web-based tool to generate customizable modded firmware for various Quansheng handheld radios.">
   <meta property="og:type" content=website>
   <meta property="og:image" content=https://whosmatt.github.io/uvmod/img/banner.webp>
 
@@ -86,9 +87,43 @@
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 id="logo" class="h3 mb-0 text-white" style="text-shadow: 0px 0px 5px #ffffffa6; font-size: 3em;">UVMOD
             </h1>
-            <a href="https://github.com/whosmatt/UV-K5-patcher" target="_blank"
-              class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                class="fab fa-github fa-sm text-white-50"></i> Repository</a>
+            <button class="d-none d-sm-inline-block btn btn-sm btn-light shadow-lg" type="button"
+              data-toggle="collapse" data-target="#instructions">&nbsp;Show Instructions&nbsp;</button>
+          </div>
+
+          <div id="instructions" class="row collapse">
+            <div class="col-lg-12">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Instructions</h6>
+                </div>
+                <div class="card-body">
+                  <h2 class="mb-4">UVMOD</h2>
+                  <p>This tool lets you create customized firmware for the Quansheng UV-K5, UV-K6, UV-K5(8), and UV-5R Plus handheld radios. To flash the firmware, you need a compatible programming cable and the necessary drivers.</p>
+                
+                  <h3 class="mt-4">Usage</h3>
+                  <ol>
+                    <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage instructions.</li>
+                    <li>On the right side, select your radio model. The upgrade tool will reject the firmware if the wrong model is selected.</li>
+                    <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
+                    <li>Click "Save" to download the finished firmware file.</li>
+                  </ol>
+                
+                  <h3 class="mt-4">Flashing</h3>
+                  <p>If you use Windows, you can use the official updater tool. You can download it directly from UVMOD using the link in the console window.</p>
+                  <ol>
+                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. In the device manager, it should show up as a com port.</li>
+                    <li>Start the updater tool, select the com port, and click connect.</li>
+                    <li>Load the customized firmware as the program file.</li>
+                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the radio stays dark. Your radio is now in bootloader mode.</li>
+                    <li>Connect the programming cable to the radio. The "Update" button in the updater tool should now become available.</li>
+                    <li>Click update and wait for the tool to finish.</li>
+                    <li>All done, all your settings should still all be intact.</li>
+                  </ol>
+                </div>
+                
+              </div>
+            </div>
           </div>
 
           <!-- Content Row -->
@@ -102,7 +137,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Mods</h6>
                   </div>
                   <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="https://github.com/whosmatt/UV-K5-patcher/blob/main/mods.js">Contribute mods &rarr;</a>
+                    href="https://github.com/whosmatt/UV-K5-patcher">Contribute mods &rarr;</a>
                 </div>
                 <div id="modsContainer" class="card-body">
                 </div>

@@ -11,6 +11,6 @@ Visitors can generate a patched firmware image by selecting the desired patches.
 
 Clone this repository and execute `python3 -m http.server` or `python -m http.server` in the root directory for an instant local web server, allowing easy testing.  
 Mods are defined in [mods.js](mods.js), with an example mod to outline the pattern.  
-Also refer to the helper functions and documentation in [modframework.js](js/modframework.js).  
+Also __refer to the helper functions and documentation in__ [modframework.js](js/modframework.js).  
 
 The supported format for binary data is in the format of a hex string __without separators__. You can use find and replace to remove all `\x` from a regular hex string or directly export the correct format from a bytes object in python using `print(''.join('%02x'%i for i in BYTES_OBJECT))`.
