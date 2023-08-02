@@ -128,7 +128,7 @@ function applyMods(firmware) {
  * 
  * 0x or \x is not allowed
  * 
- * To output a python bytearray in the correct format, use this in python: ''.join('%02x'%i for i in bytearray)
+ * To output a python bytearray in the correct format, use this in python: print(''.join('%02x'%i for i in YOUR_BYTEARRAY))
  * @example hexString("0102AAFF") // Outputs Uint8Array of 1, 2, 170, 255
  * @param {string} hexString - The hexadecimal string to convert.
  * @returns {Uint8Array} The Uint8Array representing the converted data.
@@ -140,6 +140,18 @@ function hexString(hexString) {
     byteArray[i] = byteValue;
   }
   return byteArray;
+}
+
+/**
+ * Converts a Uint8Array to a hexadecimal string, mostly for debugging purposes.
+ *
+ * @param {Uint8Array} uint8Array - The Uint8Array to convert.
+ * @returns {string} The hexadecimal representation of the Uint8Array without separators. 
+ */
+function uint8ArrayToHexString(uint8Array) {
+  return Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 
