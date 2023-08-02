@@ -47,7 +47,7 @@ modClasses = [
         apply(firmwareData) {
             const minValue = 0;
             const maxValue = 63;
-            const inputValue = parseInt(this.contrastValue.value); 
+            const inputValue = parseInt(this.contrastValue.value);
 
             if (!isNaN(inputValue) && inputValue >= minValue && inputValue <= maxValue) {
                 const newData = new Uint8Array([inputValue]);
@@ -270,10 +270,49 @@ modClasses = [
         }
     }
     ,
+    class Mod_RogerBeep extends FirmwareMod {
+        constructor() {
+            super("Roger Beep", "Changes the pitch of the two roger beep tones. Tone 1 plays for 150ms and tone 2 for 80ms. The defaults in this mod are similar to the Mototrbo beep. The maximum is 6347 Hz. ", 0);
+            this.inputTone1 = addInputField(this.modSpecificDiv, "Tone 1 frequency (Hz)", "1540");
+            this.inputTone2 = addInputField(this.modSpecificDiv, "Tone 2 frequency (Hz)", "1310");
+        }
+
+        apply(firmwareData) {
+            const offset = 0xaed0;
+            const tone1 = Math.trunc(parseInt(this.inputTone1.value) * 10.32444);
+            const tone2 = Math.trunc(parseInt(this.inputTone2.value) * 10.32444);
+        
+            if (tone1 <= 0xFFFF && tone2 <= 0xFFFF) {
+                // Create an 8-byte buffer with the specified values
+                const buffer = new ArrayBuffer(8);
+                const dataView = new DataView(buffer);
+        
+                // Set tone1 and tone2 at their respective offsets
+                dataView.setUint32(0, tone1, true); // true indicates little-endian byte order
+                dataView.setUint32(4, tone2, true);
+        
+                // Convert the buffer to a Uint8Array
+                const tonesHex = new Uint8Array(buffer);
+        
+                // Replace the 8-byte section at the offset with the new buffer
+                firmwareData = replaceSection(firmwareData, tonesHex, offset);
+                firmwareData = replaceSection(firmwareData, hexString("96"), 0xae9a);
+        
+                log(uint8ArrayToHexString(tonesHex));
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+        
+            return firmwareData;
+        }
+    }
+    ,
     class Mod_RSSI extends FirmwareMod {
         constructor() {
             super("RSSI", "Experimental mod. Adds a battery voltage readout in the status bar. Replaces the signal strength meter with a numerical RSSI readout and adds another optional element: You can choose to either have an s-meter with bargraph (signal strength in 6dB increments) or an RSSI graph showing RSSI over time.", "2250 or 1424");
-            
+
             this.selectSbar = addRadioButton(this.modSpecificDiv, "Select S-Meter, uses 2250 Bytes of additional Flash", "selectSbar", "selectRSSI");
             this.selectGraph = addRadioButton(this.modSpecificDiv, "Select RSSI Graph, uses 1424 Bytes of additional Flash CURRENTLY BROKEN", "selectGraph", "selectRSSI");
             this.selectSbar.checked = true;
@@ -294,7 +333,7 @@ modClasses = [
 
             if (this.selectSbar.checked) {
                 firmwareData = replaceSection(firmwareData, dataSbar, firmwareData.length);
-                
+
                 log(`Success: ${this.name} S-Meter applied.`);
             }
             else if (this.selectGraph.checked) {
