@@ -61,17 +61,29 @@ modClasses = [
         }
     }
     ,
-    class Mod_VCRFont extends FirmwareMod {
+    class Mod_Font extends FirmwareMod {
         constructor() {
-            super("VCR Font", "Replaces big digits and letters with a font resembling an old VCR OSD.", 0);
+            super("Font", "Changes the font to one of the following custom fonts: ", 0);
+
+            this.selectVCR = addRadioButton(this.modSpecificDiv, "VCR Font, replaces big digits", "selectVCR", "selectFont");
+            this.selectFuturistic = addRadioButton(this.modSpecificDiv, "Futuristic Font (by DO7OO), replaces big and small digits", "selectFuturistic", "selectFont");
+            this.selectVCR.checked = true;
+
         }
 
         apply(firmwareData) {
-            const offset = 0xd502;
-            const newData = hexString("0000F8FC0686C6E6F676FCF80000001F3F7767636160703F1F0000000000181CFEFE00000000000000000060607F7F60600000000000181C8686868686C6FC780000007E7F6361616161616060000000181C0606868686C6FC7800000018387060616161733F1E00000080C0E070381CFEFE00000000000707060606067F7F06060000007E7E6666666666E6C68600000018387060606060703F1F000000F8FC8686868686861C180000001F3F7161616161733F1E000000060606060686C6E67E3E000000000000007F7F0100000000000078FCC686868686C6FC780000001E3F7361616161733F1E00000078FCC68686868686FCF800000018387161616161713F1F000000008080808080808080000000000001010101010101010000");
-            firmwareData = replaceSection(firmwareData, newData, offset);
-            log(`Success: ${this.name} applied.`);
+            if (this.selectVCR.checked) {
+                const bigDigits = hexString("0000F8FC0686C6E6F676FCF80000001F3F7767636160703F1F0000000000181CFEFE00000000000000000060607F7F60600000000000181C8686868686C6FC780000007E7F6361616161616060000000181C0606868686C6FC7800000018387060616161733F1E00000080C0E070381CFEFE00000000000707060606067F7F06060000007E7E6666666666E6C68600000018387060606060703F1F000000F8FC8686868686861C180000001F3F7161616161733F1E000000060606060686C6E67E3E000000000000007F7F0100000000000078FCC686868686C6FC780000001E3F7361616161733F1E00000078FCC68686868686FCF800000018387161616161713F1F000000008080808080808080000000000001010101010101010000");
+                firmwareData = replaceSection(firmwareData, bigDigits, 0xd502);
+            }
+            else if (this.selectFuturistic.checked) {
+                const bigDigits = hexString("00FEFF01010101018181FFFF00007F7F40404040407F7F7F7F000000000000008080FFFF0000000000000000007F7F7F7F00000000018181818181818181FFFE00007F7F7F7F404040404040400000818181818181818181FFFE0000404040404040407F7F7F7F00007FFF80808080808080FFFF0000000000000000007F7F7F7F0000FEFF8181818181818181810000404040404040407F7F7F7F0000FEFF81818181818181818100007F7F7F7F40404040407F7F0000010101010101018181FFFE0000000000000000007F7F7F7F0000FEFF81818181818181FFFF00007F7F40404040407F7F7F7F0000FEFF81818181818181FFFF0000000000000000007F7F7F7F000000808080808080808080000000000303030303030303030000");
+                const smallDigits = hexString("007E414141797F00000000787F000079794949494E0049494949797E0007080808787F004E4949497979007E79494949790001010101797E007E494949797F000E090909797F0008080808080000000000000000");
+                firmwareData = replaceSection(firmwareData, bigDigits, 0xd502);
+                firmwareData = replaceSection(firmwareData, smallDigits, 0xd620);
+            }
 
+            log(`Success: ${this.name} applied.`);
             return firmwareData;
         }
     }
@@ -281,29 +293,29 @@ modClasses = [
             const offset = 0xaed0;
             const tone1 = Math.trunc(parseInt(this.inputTone1.value) * 10.32444);
             const tone2 = Math.trunc(parseInt(this.inputTone2.value) * 10.32444);
-        
+
             if (tone1 <= 0xFFFF && tone2 <= 0xFFFF) {
                 // Create an 8-byte buffer with the specified values
                 const buffer = new ArrayBuffer(8);
                 const dataView = new DataView(buffer);
-        
+
                 // Set tone1 and tone2 at their respective offsets
                 dataView.setUint32(0, tone1, true); // true indicates little-endian byte order
                 dataView.setUint32(4, tone2, true);
-        
+
                 // Convert the buffer to a Uint8Array
                 const tonesHex = new Uint8Array(buffer);
-        
+
                 // Replace the 8-byte section at the offset with the new buffer
                 firmwareData = replaceSection(firmwareData, tonesHex, offset);
                 firmwareData = replaceSection(firmwareData, hexString("96"), 0xae9a);
-        
+
                 log(`Success: ${this.name} applied.`);
             }
             else {
                 log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
             }
-        
+
             return firmwareData;
         }
     }
