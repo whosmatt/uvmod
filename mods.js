@@ -298,7 +298,6 @@ modClasses = [
                 firmwareData = replaceSection(firmwareData, tonesHex, offset);
                 firmwareData = replaceSection(firmwareData, hexString("96"), 0xae9a);
         
-                log(uint8ArrayToHexString(tonesHex));
                 log(`Success: ${this.name} applied.`);
             }
             else {
@@ -340,6 +339,51 @@ modClasses = [
                 firmwareData = replaceSection(firmwareData, dataGraph, firmwareData.length);
 
                 log(`Success: ${this.name} Graph applied.`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_EnableSWDPort extends FirmwareMod {
+        constructor() {
+            super("Enable SWD Port", "If you don't know what SWD is, you don't need this mod! Allows debugging via SWD. You will need to solder wires to the main board of the radio and connect them to specialized hardware. ", 0);
+        }
+
+        apply(firmwareData) {
+            const offset1 = 0xb924;
+            const offset2 = 0xb9b2;
+            const oldData1 = hexString("c860");
+            const oldData2 = hexString("4860");
+            const newData = hexString("00bf");
+            if (compareSection(firmwareData, oldData1, offset1) && compareSection(firmwareData, oldData2, offset2)) {
+                firmwareData = replaceSection(firmwareData, newData, offset1);
+                firmwareData = replaceSection(firmwareData, newData, offset2);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_FrequencyRangeSimple extends FirmwareMod {
+        constructor() {
+            super("Larger Frequency Range", "Changes the lower limit of Band 1 to 18 MHz and the upper limit of Band 7 to 999 MHz for RX. TX ranges are not affected. ", 0);
+        }
+
+        apply(firmwareData) {
+            const offset = 0xe074;
+            const oldData = hexString("404b4c0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd0200879303");
+            const newData = hexString("40771b0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd02f6e0f505");
+            if (compareSection(firmwareData, oldData, offset)) {
+                firmwareData = replaceSection(firmwareData, newData, offset);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
             }
 
             return firmwareData;
