@@ -402,4 +402,49 @@ modClasses = [
         }
     }
     ,
+    class Mod_FrequencySteps extends FirmwareMod {
+        constructor() {
+            super("Frequency Steps", "Changes the frequency steps.", 0);
+            this.inputStep1 = addInputField(this.modSpecificDiv, "Frequency Step 1 (Hz)", "2500");
+            this.inputStep2 = addInputField(this.modSpecificDiv, "Frequency Step 2 (Hz)", "5000");
+            this.inputStep3 = addInputField(this.modSpecificDiv, "Frequency Step 3 (Hz)", "6250");
+            this.inputStep4 = addInputField(this.modSpecificDiv, "Frequency Step 4 (Hz)", "10000");
+            this.inputStep5 = addInputField(this.modSpecificDiv, "Frequency Step 5 (Hz)", "12500");
+            this.inputStep6 = addInputField(this.modSpecificDiv, "Frequency Step 6 (Hz)", "25000");
+            this.inputStep7 = addInputField(this.modSpecificDiv, "Frequency Step 7 (Hz) (only available on band 2)", "8330");
+        }
+    
+        apply(firmwareData) {
+            const offset = 0xE0C8;
+    
+            const steps = [
+                Math.trunc(parseInt(this.inputStep1.value) * 0.1),
+                Math.trunc(parseInt(this.inputStep2.value) * 0.1),
+                Math.trunc(parseInt(this.inputStep3.value) * 0.1),
+                Math.trunc(parseInt(this.inputStep4.value) * 0.1),
+                Math.trunc(parseInt(this.inputStep5.value) * 0.1),
+                Math.trunc(parseInt(this.inputStep6.value) * 0.1),
+                Math.trunc(parseInt(this.inputStep7.value) * 0.1),
+            ];
+    
+            // Create an 8-byte buffer with the specified values
+            const buffer = new ArrayBuffer(14);
+            const dataView = new DataView(buffer);
+    
+            // Set each step at their respective offsets
+            for (let i = 0; i < steps.length; i++) {
+                dataView.setUint16(i * 2, steps[i], true); // true indicates little-endian byte order
+            }
+    
+            // Convert the buffer to a Uint8Array
+            const stepsHex = new Uint8Array(buffer);
+    
+            // Replace the 14-byte section at the offset with the new buffer
+            firmwareData = replaceSection(firmwareData, stepsHex, offset);
+    
+            log(`Success: ${this.name} applied.`);
+            return firmwareData;
+        }
+    }
+    ,
 ]
