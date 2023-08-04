@@ -413,10 +413,10 @@ modClasses = [
             this.inputStep6 = addInputField(this.modSpecificDiv, "Frequency Step 6 (Hz)", "25000");
             this.inputStep7 = addInputField(this.modSpecificDiv, "Frequency Step 7 (Hz) (only available on band 2)", "8330");
         }
-    
+
         apply(firmwareData) {
             const offset = 0xE0C8;
-    
+
             const steps = [
                 Math.trunc(parseInt(this.inputStep1.value) * 0.1),
                 Math.trunc(parseInt(this.inputStep2.value) * 0.1),
@@ -426,23 +426,52 @@ modClasses = [
                 Math.trunc(parseInt(this.inputStep6.value) * 0.1),
                 Math.trunc(parseInt(this.inputStep7.value) * 0.1),
             ];
-    
+
             // Create an 8-byte buffer with the specified values
             const buffer = new ArrayBuffer(14);
             const dataView = new DataView(buffer);
-    
+
             // Set each step at their respective offsets
             for (let i = 0; i < steps.length; i++) {
                 dataView.setUint16(i * 2, steps[i], true); // true indicates little-endian byte order
             }
-    
+
             // Convert the buffer to a Uint8Array
             const stepsHex = new Uint8Array(buffer);
-    
+
             // Replace the 14-byte section at the offset with the new buffer
             firmwareData = replaceSection(firmwareData, stepsHex, offset);
-    
+
             log(`Success: ${this.name} applied.`);
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_AMOnAllBands extends FirmwareMod {
+        constructor() {
+            super("AM on all Bands", "For some reason, the original firmware only allows the AM setting to work on band 2. This mod allows AM to work on any band.", 0);
+        }
+
+        apply(firmwareData) {
+            const offset1 = 0x6232;
+            const offset2 = 0x6246;
+            const offset3 = 0x624c;
+            const oldData1 = hexString("0b");
+            const oldData2 = hexString("01");
+            const oldData3 = hexString("b07b");
+            const newData1 = hexString("0e");
+            const newData2 = hexString("04");
+            const newData3 = hexString("01e0");
+            if (compareSection(firmwareData, oldData1, offset1) && compareSection(firmwareData, oldData2, offset2) && compareSection(firmwareData, oldData3, offset3)) {
+                firmwareData = replaceSection(firmwareData, newData1, offset1);
+                firmwareData = replaceSection(firmwareData, newData2, offset2);
+                firmwareData = replaceSection(firmwareData, newData3, offset3);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+
             return firmwareData;
         }
     }
