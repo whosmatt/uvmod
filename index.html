@@ -85,6 +85,7 @@
         transform: translateY(0);
       }
     }
+
     #wrapper {
       animation: fadeInFromBottom 0.7s ease-out;
     }
@@ -138,8 +139,8 @@
                   <ol>
                     <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage
                       instructions.</li>
-                    <li>On the right side, select your radio model. The upgrade tool will reject the firmware if the
-                      wrong model is selected.</li>
+                    <li>On the right side, you can select your radio model, but you can also leave it on "Patch for all
+                      radios", which uses a glitch in the updater tool to bypass the version check. </li>
                     <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you
                       get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
                     <li>Click "Save" to download the finished firmware file.</li>
@@ -216,6 +217,7 @@
                       <span id="useDefaultFirmwareSpan" class="form-control" readonly>Using stock v26 firmware</span>
                     </div>
                     <select class="form-control mt-2" id="firmwareVersionSelect">
+                      <option value="*">Patch for all radios</option>
                       <option value="2">Patch for UV-K5</option>
                       <option value="3">Patch for UV-K6, UV-K5(8)</option>
                       <option value="4">Patch for UV-5R Plus</option>
