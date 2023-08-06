@@ -86,8 +86,12 @@
       }
     }
 
-    #wrapper {
+    #content-wrapper {
       animation: fadeInFromBottom 0.7s ease-out;
+    }
+
+    checkbox {
+      cursor: pointer;
     }
   </style>
 </head>
@@ -113,7 +117,7 @@
       <div id="content">
 
         <!-- Begin Page Content -->
-        <div class="container-sm mt-4">
+        <div class="container mt-4" style="max-width: 1440px;">
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -140,7 +144,7 @@
                     <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage
                       instructions.</li>
                     <li>On the right side, you can select your radio model, but you can also leave it on "Patch for all
-                      radios", which uses a glitch in the updater tool to bypass the version check. </li>
+                      radios", which creates a universal firmware that bypasses the version check. </li>
                     <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you
                       get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
                     <li>Click "Save" to download the finished firmware file.</li>
@@ -186,7 +190,7 @@
               </div>
             </div>
 
-            <div class="col-md-auto mb-4">
+            <div class="col-lg-4 mb-4">
               <!-- Console -->
               <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
                 <div class="card-header py-3 d-flex">
@@ -233,13 +237,13 @@
                     </a>
                   </div>
                   <div class="mt-2 d-flex">
-                    <a id="downloadButton" class="btn btn-dark btn-icon-split mr-1 disabled">
+                    <a id="downloadButton" class="btn btn-dark btn-icon-split mr-1 disabled w-100">
                       <span class="icon text-white-50">
                         <i class="fas fa-download"></i>
                       </span>
                       <span class="text w-100">Save firmware</span>
                     </a>
-                    <a id="flashButton" class="btn btn-dark btn-icon-split disabled">
+                    <a id="flashButton" class="btn btn-dark btn-icon-split disabled w-100">
                       <span class="icon text-white-50">
                         <i class="fab fa-usb"></i>
                       </span>
