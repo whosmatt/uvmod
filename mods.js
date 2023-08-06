@@ -447,6 +447,57 @@ modClasses = [
         }
     }
     ,
+    class Mod_NOAAFrequencies extends FirmwareMod {
+        constructor() {
+            super("NOAA Frequencies", "The NOAA scan feature is unique because it can scan in the background, all the time. However, most people dont need the weather alerts or dont have NOAA in their country. This mod lets you change the frequencies so you can use the NOAA scan function for something else. The values below are pre-set to the first 10 PMR446 channels. ", 0);
+            this.inputFreq1 = addInputField(this.modSpecificDiv,   "Frequency 1 (Hz)", "446006250");
+            this.inputFreq2 = addInputField(this.modSpecificDiv,   "Frequency 2 (Hz)", "446018750");
+            this.inputFreq3 = addInputField(this.modSpecificDiv,   "Frequency 3 (Hz)", "446031250");
+            this.inputFreq4 = addInputField(this.modSpecificDiv,   "Frequency 4 (Hz)", "446043750");
+            this.inputFreq5 = addInputField(this.modSpecificDiv,   "Frequency 5 (Hz)", "446056250");
+            this.inputFreq6 = addInputField(this.modSpecificDiv,   "Frequency 6 (Hz)", "446068750");
+            this.inputFreq7 = addInputField(this.modSpecificDiv,   "Frequency 7 (Hz)", "446081250");
+            this.inputFreq8 = addInputField(this.modSpecificDiv,   "Frequency 8 (Hz)", "446093750");
+            this.inputFreq9 = addInputField(this.modSpecificDiv,   "Frequency 9 (Hz)", "446106250");
+            this.inputFreq10 = addInputField(this.modSpecificDiv,  "Frequency 10 (Hz)", "446118750");
+        }
+
+        apply(firmwareData) {
+            const offset = 0xE0D8;
+
+            const freqs = [
+                Math.trunc(parseInt(this.inputFreq1.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq2.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq3.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq4.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq5.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq6.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq7.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq8.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq9.value) * 0.1),
+                Math.trunc(parseInt(this.inputFreq10.value) * 0.1)
+            ];
+
+            // Create an 8-byte buffer with the specified values
+            const buffer = new ArrayBuffer(40);
+            const dataView = new DataView(buffer);
+
+            // Set each step at their respective offsets
+            for (let i = 0; i < freqs.length; i++) {
+                dataView.setUint32(i * 4, freqs[i], true); // true indicates little-endian byte order
+            }
+
+            // Convert the buffer to a Uint8Array
+            const freqsHex = new Uint8Array(buffer);
+
+            // Replace the 14-byte section at the offset with the new buffer
+            firmwareData = replaceSection(firmwareData, freqsHex, offset);
+
+            log(`Success: ${this.name} applied.`);
+            return firmwareData;
+        }
+    }
+    ,
     class Mod_AMOnAllBands extends FirmwareMod {
         constructor() {
             super("AM on all Bands", "For some reason, the original firmware only allows the AM setting to work on band 2. This mod allows AM to work on any band.", 0);
