@@ -1,4 +1,5 @@
 # [CLICK HERE TO OPEN UVMOD](https://whosmatt.github.io/uvmod/)
+## [中文版 Open Chinese Version (maintained independently)](https://uvmod.xanyi.eu.org/)
 
 ## Introduction
 
