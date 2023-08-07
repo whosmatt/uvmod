@@ -17,5 +17,5 @@ Also __refer to the helper functions and documentation in__ [modframework.js](js
 The supported format for binary data is in the format of a hex string __without separators__. You can use find and replace to remove all `\x` from a regular hex string or directly export the correct format from a bytes object in python using `print(''.join('%02x'%i for i in BYTES_OBJECT))`.
 
 ## **Comming soon** 
-offline universal firmware versions patcher
-based on search and replace pattern to change with precission the functions of these patches on all firmware versions and upcomming versions.
+Offline universal firmware version patcher
+based on search and replace pattern to change and modificate with precission the functions of these patches direct on all firmware versions and upcomming versions files.
