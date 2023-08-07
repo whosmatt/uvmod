@@ -1,4 +1,4 @@
-# [CLICK HERE TO OPEN UVMOD](https://whosmatt.github.io/uvmod/)
+# [CLICK HERE TO OPEN UVMOD](https://re3con.github.io/uvmod/)
 ## [中文版 Open Chinese Version (maintained independently)](https://uvmod.xanyi.eu.org/)
 
 ## Introduction
