@@ -15,3 +15,7 @@ Mods are defined in [mods.js](mods.js), with an example mod to outline the patte
 Also __refer to the helper functions and documentation in__ [modframework.js](js/modframework.js).  
 
 The supported format for binary data is in the format of a hex string __without separators__. You can use find and replace to remove all `\x` from a regular hex string or directly export the correct format from a bytes object in python using `print(''.join('%02x'%i for i in BYTES_OBJECT))`.
+
+## **Comming soon** 
+offline universal firmware versions patcher
+based on search and replace pattern to change with precission the functions of these patches on all firmware versions and upcomming versions.
