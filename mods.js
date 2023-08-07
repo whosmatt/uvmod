@@ -111,13 +111,13 @@ modClasses = [
     ,
     class Mod_DisableTX extends FirmwareMod {
         constructor() {
-            super("Disable TX completely", "Prevents transmitting on all frequencies, making the radio purely a receiver.", 0);
+            super("Disable TX Lock from 50-850 MHz", "Enables transmitting on frequencies from 50 MHz to 850 MHz.", 0);
         }
 
         apply(firmwareData) {
             const offset = 0x180e;
             const oldData = hexString("cf2a");
-            const newData = hexString("f0bd");
+            const newData = hexString("5de0");
             if (compareSection(firmwareData, oldData, offset)) {
                 firmwareData = replaceSection(firmwareData, newData, offset);
                 log(`Success: ${this.name} applied.`);
