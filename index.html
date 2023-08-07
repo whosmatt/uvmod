@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
   <meta charset="utf-8">
@@ -124,47 +124,37 @@
             <h1 id="logo" class="h3 mb-0 text-white" style="text-shadow: 0px 0px 5px #ffffffa6; font-size: 3em;">UVMOD
             </h1>
             <button class="d-none d-sm-inline-block btn btn-sm btn-light shadow-lg" type="button" data-toggle="collapse"
-              data-target="#instructions">&nbsp;Show Instructions&nbsp;</button>
+              data-target="#instructions">&nbsp;显示说明&nbsp;</button>
           </div>
 
           <div id="instructions" class="row collapse">
             <div class="col-lg-12">
               <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Instructions</h6>
+                  <h6 class="m-0 font-weight-bold text-primary">说明</h6>
                 </div>
                 <div class="card-body">
                   <h2 class="mb-4">UVMOD</h2>
-                  <p>This tool lets you create customized firmware for the Quansheng UV-K5, UV-K6, UV-K5(8), and UV-5R
-                    Plus handheld radios. To flash the firmware, you need a compatible programming cable and the
-                    necessary drivers.</p>
+                  <p>此工具可为泉盛 UV-K5、UV-K6、UV-K5（8） UV-5R和UV-5R Plus 创建自定义固件，需要一根兼容的K头刷机线和驱动程序</p>
 
-                  <h3 class="mt-4">Usage</h3>
+                  <h3 class="mt-4">用法</h3>
                   <ol>
-                    <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage
-                      instructions.</li>
-                    <li>On the right side, you can select your radio model, but you can also leave it on "Patch for all
-                      radios", which creates a universal firmware that bypasses the version check. </li>
-                    <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you
-                      get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
-                    <li>Click "Save" to download the finished firmware file.</li>
+                    <li>选择所需的Mod并根据需要进行自定义。请参阅每个Mod的描述以了解用法。</li>
+                    <li>在右侧可以选择电台型号，但也可以将其设置为“所有型号”垒创建一个绕过版本检查的通用固件。</li>
+                    <li>单击“打包”并观察控制台输出，其中将显示错误以及固件最终大小。如果你收到固件大小超大警告，你必须取消一些Mod然后重试。</li>
+                    <li>单击“保存”以下载打包完成的固件文件。</li>
                   </ol>
 
-                  <h3 class="mt-4">Flashing</h3>
-                  <p>If you use Windows, you can use the official updater tool. You can download it directly from UVMOD
-                    using the link in the console window.</p>
+                  <h3 class="mt-4">刷机</h3>
+                  <p>如果您使用Windows，则可以使用官方更新程序工具。您可以直接从UVMOD控制台窗口中的链接下载使用。</p>
                   <ol>
-                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. In
-                      the device manager, it should show up as a com port.</li>
-                    <li>Start the updater tool, select the com port, and click connect.</li>
-                    <li>Load the customized firmware as the program file.</li>
-                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and
-                      turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the
-                      radio stays dark. Your radio is now in bootloader mode.</li>
-                    <li>Connect the programming cable to the radio. The "Update" button in the updater tool should now
-                      become available.</li>
-                    <li>Click update and wait for the tool to finish.</li>
-                    <li>All done, all your settings should still all be intact.</li>
+                    <li>将刷机线连接到计算机，并确保安装了正确的驱动程序。在设备管理器，它应该显示为COM端口。</li>
+                    <li>启动更新程序工具，选择 COM 端口，然后单击连接。</li>
+                    <li>加载自定义固件。</li>
+                    <li>在断开连接并关闭的手台上，按住PTT的同时打开手台。此时手电筒应该打开且屏幕为关闭保状态，此时手台处于刷机模式。</li>
+                    <li>将刷机线连接到手台。更新程序工具中的“更新”按钮现在应该变得可点击。</li>
+                    <li>单击更新并等待工具完成。</li>
+                    <li>全部完成，您的所有设置仍应保持不变。</li>
                   </ol>
                 </div>
 
@@ -183,7 +173,7 @@
                     <h6 class="m-0 font-weight-bold text-primary">Mods</h6>
                   </div>
                   <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="https://github.com/whosmatt/UV-K5-patcher">Contribute mods &rarr;</a>
+                    href="https://github.com/whosmatt/UV-K5-patcher">贡献 Mods &rarr;</a>
                 </div>
                 <div id="modsContainer" class="card-body">
                 </div>
@@ -195,10 +185,10 @@
               <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
                 <div class="card-header py-3 d-flex">
                   <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Console</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">控制台</h6>
                   </div>
                   <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="fw/uvk5updater.zip">Download updater software &rarr;</a>
+                    href="fw/uvk5updater.zip">下载刷机工具 &rarr;</a>
                 </div>
                 <div class="card-body">
                   <div>
@@ -218,13 +208,13 @@
                         <label id="customFileLabel" class="custom-file-label" for="customFileInput">Select own firmware
                           (v26 only)</label>
                       </div>
-                      <span id="useDefaultFirmwareSpan" class="form-control" readonly>Using stock v26 firmware</span>
+                      <span id="useDefaultFirmwareSpan" class="form-control" readonly>使用预置v26固件</span>
                     </div>
                     <select class="form-control mt-2" id="firmwareVersionSelect">
-                      <option value="*">Patch for all radios</option>
-                      <option value="2">Patch for UV-K5</option>
-                      <option value="3">Patch for UV-K6, UV-K5(8)</option>
-                      <option value="4">Patch for UV-5R Plus</option>
+                      <option value="*">为所有型号打包</option>
+                      <option value="2">为UV-K5打包</option>
+                      <option value="3">为UV-K6, UV-K5(8)打包</option>
+                      <option value="4">为UV-5R Plus打包</option>
                     </select>
                   </div>
 
@@ -233,7 +223,7 @@
                       <span class="icon text-white-50">
                         <i class="fas fa-wrench"></i>
                       </span>
-                      <span class="text w-100">Patch firmware</span>
+                      <span class="text w-100">打包固件</span>
                     </a>
                   </div>
                   <div class="mt-2 d-flex">
@@ -241,7 +231,7 @@
                       <span class="icon text-white-50">
                         <i class="fas fa-download"></i>
                       </span>
-                      <span class="text w-100">Save firmware</span>
+                      <span class="text w-100">保存固件</span>
                     </a>
                     <a id="flashButton" class="btn btn-dark btn-icon-split disabled w-100">
                       <span class="icon text-white-50">

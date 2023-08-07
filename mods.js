@@ -1,11 +1,11 @@
 modClasses = [
     class Mod_Example extends FirmwareMod {
         constructor() {
-            super("Example Mod", "This mod does absolutely nothing and is used as an example for implementing new mods", 0); // Add name, description and size (additional flash used, 0 for most mods)
+            super("示例Mod", "这个 Mod 什么用都没有，被用作实现新 Mod 的示例", 0); // Add name, description and size (additional flash used, 0 for most mods)
 
             // Customize the mod-specific div with input elements
             // There is a helper function for adding input fields easily:
-            this.inputField1 = addInputField(this.modSpecificDiv, "Example Mod specific input field 1", "Editable data");
+            this.inputField1 = addInputField(this.modSpecificDiv, "示例 Mod 特定输入字段 1", "可编辑数据");
         }
 
         apply(firmwareData) {
@@ -18,7 +18,7 @@ modClasses = [
     ,
     class Mod_BatteryIcon extends FirmwareMod {
         constructor() {
-            super("Battery icon", "Changes the battery icon to a more normal looking variant.", 0);
+            super("电池图标", "更改电池图标", 0);
         }
 
         apply(firmwareData) {
@@ -39,9 +39,9 @@ modClasses = [
     ,
     class Mod_ChangeContrast extends FirmwareMod {
         constructor() {
-            super("LCD Contrast", "Changes LCD contrast to any value from 0 to 63 (higher is darker). The default value is 31", 0);
+            super("屏幕对比度", "在0到63之间改变屏幕的对比对（越高越黑），默认31", 0);
 
-            this.contrastValue = addInputField(this.modSpecificDiv, "Enter a new contrast value from 0-63:", "31");
+            this.contrastValue = addInputField(this.modSpecificDiv, "输入0-63之间的对比度值:", "31");
         }
 
         apply(firmwareData) {
@@ -63,10 +63,10 @@ modClasses = [
     ,
     class Mod_Font extends FirmwareMod {
         constructor() {
-            super("Font", "Changes the font to one of the following custom fonts: ", 0);
+            super("字体", "将字体更改为以下自定义字体之一：", 0);
 
-            this.selectVCR = addRadioButton(this.modSpecificDiv, "VCR Font, replaces big digits", "selectVCR", "selectFont");
-            this.selectFuturistic = addRadioButton(this.modSpecificDiv, "Futuristic Font (by DO7OO), replaces big and small digits", "selectFuturistic", "selectFont");
+            this.selectVCR = addRadioButton(this.modSpecificDiv, "VCR字体，替换大数字", "selectVCR", "selectFont");
+            this.selectFuturistic = addRadioButton(this.modSpecificDiv, "Futuristic 字体 (by DO7OO)，替换大小数字", "selectFuturistic", "selectFont");
             this.selectVCR.checked = true;
 
         }
@@ -90,7 +90,7 @@ modClasses = [
     ,
     class Mod_FreqCopyTimeout extends FirmwareMod {
         constructor() {
-            super("Disable Freq Copy Timeout", "Prevents freq copy and CTCSS decoder from timing out with \"SCAN FAIL\", allowing both functions to run indefinitely until a signal is found.", 0);
+            super("禁用频率复制超时", "防止频率复制和 CTCSS 解码器因“扫描失败”而超时，允许这两个功能无限期运行，直到找到信号。", 0);
         }
 
         apply(firmwareData) {
@@ -111,7 +111,7 @@ modClasses = [
     ,
     class Mod_DisableTX extends FirmwareMod {
         constructor() {
-            super("Disable TX completely", "Prevents transmitting on all frequencies, making the radio purely a receiver.", 0);
+            super("完全禁用发射", "防止在所有频率上发射，使手台纯粹是接收器。", 0);
         }
 
         apply(firmwareData) {
@@ -132,7 +132,7 @@ modClasses = [
     ,
     class Mod_DoubleBacklightDuration extends FirmwareMod {
         constructor() {
-            super("Double Backlight Duration", "Always multiplies the backlight duration set on the radio by 2. A set value of 5 would then corresponds to 10 seconds of backlight.", 0);
+            super("双倍背光持续时间", "设置的背光持续时间乘以 2。设置值 5 将对应于 10 秒的背光。", 0);
         }
 
         apply(firmwareData) {
@@ -153,7 +153,7 @@ modClasses = [
     ,
     class Mod_SkipBootscreen extends FirmwareMod {
         constructor() {
-            super("Skip Bootscreen", "Skips the bootscreen and instantly goes to the main screen on powerup.", 0);
+            super("跳过启动屏幕", "跳过启动屏幕，开机后立即进入主屏幕。", 0);
         }
 
         apply(firmwareData) {
@@ -174,7 +174,7 @@ modClasses = [
     ,
     class Mod_MenuStrings extends FirmwareMod {
         constructor() {
-            super("Menu strings", "Changes text in the settings menu. The displayed JSON contains every string with offset, description and size. Only edit the string and dont use more characters than allowed by the size.", 0);
+            super("菜单文本修改", "更改设置菜单中的文本。显示的 JSON 包含带有偏移量、描述和大小的每个字符串。仅编辑字符串，不要使用超过大小允许的字符数。", 0);
 
             // the  b l o c k
             const strings = [{ "offset": 56470, "description": "squelch", "size": 6, "string": "SQLCH" }, { "offset": 56477, "description": "step", "size": 6, "string": "STEP" }, { "offset": 56484, "description": "txpower", "size": 6, "string": "TXPWR" }, { "offset": 56491, "description": "r dcs", "size": 6, "string": "R_DCS" },
@@ -239,7 +239,7 @@ modClasses = [
     ,
     class Mod_MicGain extends FirmwareMod {
         constructor() {
-            super("Increase Mic Gain", "Gives the microphone gain an additional boost. You can still fine tune the mic gain in the menu but it will always be louder than without this mod.", 0);
+            super("增加麦克风增益", "为麦克风增益提供额外的提升。您仍然可以在菜单中微调麦克风增益，但它比没有该 Mod 时更响亮", 0);
         }
 
         apply(firmwareData) {
@@ -263,7 +263,7 @@ modClasses = [
     ,
     class Mod_NegativeDisplay extends FirmwareMod {
         constructor() {
-            super("Negative Display", "Inverts the colors on the display.", 0);
+            super("反色屏幕", "反转屏幕颜色。", 0);
         }
 
         apply(firmwareData) {
@@ -284,9 +284,9 @@ modClasses = [
     ,
     class Mod_RogerBeep extends FirmwareMod {
         constructor() {
-            super("Roger Beep", "Changes the pitch of the two roger beep tones. Tone 1 plays for 150ms and tone 2 for 80ms. The defaults in this mod are similar to the Mototrbo beep. The maximum is 6347 Hz. ", 0);
-            this.inputTone1 = addInputField(this.modSpecificDiv, "Tone 1 frequency (Hz)", "1540");
-            this.inputTone2 = addInputField(this.modSpecificDiv, "Tone 2 frequency (Hz)", "1310");
+            super("尾音", "改变尾音的两个音调。音调 1 播放 150 毫秒，音调 2 播放 80 毫秒。此 Mod 中的默认值类似于 Mototrbo 尾音。最大值为 6347 Hz。", 0);
+            this.inputTone1 = addInputField(this.modSpecificDiv, "音调 1 频率 (Hz)", "1540");
+            this.inputTone2 = addInputField(this.modSpecificDiv, "音调 2 频率 (Hz)", "1310");
         }
 
         apply(firmwareData) {
@@ -322,10 +322,9 @@ modClasses = [
     ,
     class Mod_RSSI extends FirmwareMod {
         constructor() {
-            super("RSSI", "Experimental mod. Adds a battery voltage readout in the status bar. Replaces the signal strength meter with a numerical RSSI readout and adds another optional element: You can choose to either have an s-meter with bargraph (signal strength in 6dB increments) or an RSSI graph showing RSSI over time.", "2250 or 1424");
-
-            this.selectSbar = addRadioButton(this.modSpecificDiv, "Select S-Meter, uses 2250 Bytes of additional Flash", "selectSbar", "selectRSSI");
-            this.selectGraph = addRadioButton(this.modSpecificDiv, "Select RSSI Graph, uses 1424 Bytes of additional Flash CURRENTLY BROKEN", "selectGraph", "selectRSSI");
+            super("RSSI", "实验 Mod 。在状态栏中添加电池电压读数。将信号强度计替换为数字 RSSI 读数，并添加另一个可选项：您可以选择使用带条形图（以 6dB 为增量的信号强度）的 S 表或显示 RSSI 随时间变化的 RSSI 图。");
+            this.selectSbar = addRadioButton(this.modSpecificDiv, "选择 S 表，使用 2250 Bytes的额外空间", "selectSbar", "selectRSSI");
+            this.selectGraph = addRadioButton(this.modSpecificDiv, "选择 RSSI 图形，使用 1424 Bytes的额外空间，当前不可用", "selectGraph", "selectRSSI");
             this.selectSbar.checked = true;
             this.selectGraph.disabled = true; // currently broken, doesnt boot and python variant of the mod doesnt seem to do anything
 
@@ -359,7 +358,7 @@ modClasses = [
     ,
     class Mod_EnableSWDPort extends FirmwareMod {
         constructor() {
-            super("Enable SWD Port", "If you don't know what SWD is, you don't need this mod! Allows debugging via SWD. You will need to solder wires to the main board of the radio and connect them to specialized hardware. ", 0);
+            super("启用 SWD 端口", "如果你不知道什么是 SWD，你不需要这个 Mod ！允许通过 SWD 进行调试。您需要将电线焊接到无线电的主板上，并将它们连接到专用硬件。", 0);
         }
 
         apply(firmwareData) {
@@ -383,7 +382,7 @@ modClasses = [
     ,
     class Mod_FrequencyRangeSimple extends FirmwareMod {
         constructor() {
-            super("Larger Frequency Range", "Changes the lower limit of Band 1 to 18 MHz and the upper limit of Band 7 to 999 MHz for RX. TX ranges are not affected. ", 0);
+            super("更大的频率范围", "将 RX 的频段 1 下限更改为 18 MHz，将频段 7 的上限更改为 999 MHz。TX 范围不受影响。", 0);
         }
 
         apply(firmwareData) {
@@ -404,14 +403,14 @@ modClasses = [
     ,
     class Mod_FrequencySteps extends FirmwareMod {
         constructor() {
-            super("Frequency Steps", "Changes the frequency steps.", 0);
-            this.inputStep1 = addInputField(this.modSpecificDiv, "Frequency Step 1 (Hz)", "2500");
-            this.inputStep2 = addInputField(this.modSpecificDiv, "Frequency Step 2 (Hz)", "5000");
-            this.inputStep3 = addInputField(this.modSpecificDiv, "Frequency Step 3 (Hz)", "6250");
-            this.inputStep4 = addInputField(this.modSpecificDiv, "Frequency Step 4 (Hz)", "10000");
-            this.inputStep5 = addInputField(this.modSpecificDiv, "Frequency Step 5 (Hz)", "12500");
-            this.inputStep6 = addInputField(this.modSpecificDiv, "Frequency Step 6 (Hz)", "25000");
-            this.inputStep7 = addInputField(this.modSpecificDiv, "Frequency Step 7 (Hz) (only available on band 2)", "8330");
+            super("频率步进", "更改频率步进。", 0);
+            this.inputStep1 = addInputField(this.modSpecificDiv, "频率步长 1 (Hz)", "2500");
+            this.inputStep2 = addInputField(this.modSpecificDiv, "频率步长 2 (Hz)", "5000");
+            this.inputStep3 = addInputField(this.modSpecificDiv, "频率步长 3 (Hz)", "6250");
+            this.inputStep4 = addInputField(this.modSpecificDiv, "频率步长 4 (Hz)", "10000");
+            this.inputStep5 = addInputField(this.modSpecificDiv, "频率步长 5 (Hz)", "12500");
+            this.inputStep6 = addInputField(this.modSpecificDiv, "频率步长 6 (Hz)", "25000");
+            this.inputStep7 = addInputField(this.modSpecificDiv, "频率步长 7 (Hz) (仅适用于F2频段)", "8330");
         }
 
         apply(firmwareData) {
@@ -449,17 +448,17 @@ modClasses = [
     ,
     class Mod_NOAAFrequencies extends FirmwareMod {
         constructor() {
-            super("NOAA Frequencies", "The NOAA scan feature is unique because it can scan in the background, all the time. However, most people dont need the weather alerts or dont have NOAA in their country. This mod lets you change the frequencies so you can use the NOAA scan function for something else. The values below are pre-set to the first 10 PMR446 channels. ", 0);
-            this.inputFreq1 = addInputField(this.modSpecificDiv,   "Frequency 1 (Hz)", "446006250");
-            this.inputFreq2 = addInputField(this.modSpecificDiv,   "Frequency 2 (Hz)", "446018750");
-            this.inputFreq3 = addInputField(this.modSpecificDiv,   "Frequency 3 (Hz)", "446031250");
-            this.inputFreq4 = addInputField(this.modSpecificDiv,   "Frequency 4 (Hz)", "446043750");
-            this.inputFreq5 = addInputField(this.modSpecificDiv,   "Frequency 5 (Hz)", "446056250");
-            this.inputFreq6 = addInputField(this.modSpecificDiv,   "Frequency 6 (Hz)", "446068750");
-            this.inputFreq7 = addInputField(this.modSpecificDiv,   "Frequency 7 (Hz)", "446081250");
-            this.inputFreq8 = addInputField(this.modSpecificDiv,   "Frequency 8 (Hz)", "446093750");
-            this.inputFreq9 = addInputField(this.modSpecificDiv,   "Frequency 9 (Hz)", "446106250");
-            this.inputFreq10 = addInputField(this.modSpecificDiv,  "Frequency 10 (Hz)", "446118750");
+            super("NOAA 频率", "NOAA 扫描功能是独一无二的，因为它可以一直进行后台扫描。但是，大多数人不需要天气警报，或者他们的国家没有NOAA。这个 Mod 让你改变频率，这样你就可以使用NOAA扫描功能做其他事情。以下值预设为前 10 个 PMR446 通道。", 0);
+            this.inputFreq1 = addInputField(this.modSpecificDiv,   "频率1 (Hz)", "446006250");
+            this.inputFreq2 = addInputField(this.modSpecificDiv,   "频率2 (Hz)", "446018750");
+            this.inputFreq3 = addInputField(this.modSpecificDiv,   "频率3 (Hz)", "446031250");
+            this.inputFreq4 = addInputField(this.modSpecificDiv,   "频率4 (Hz)", "446043750");
+            this.inputFreq5 = addInputField(this.modSpecificDiv,   "频率5 (Hz)", "446056250");
+            this.inputFreq6 = addInputField(this.modSpecificDiv,   "频率6 (Hz)", "446068750");
+            this.inputFreq7 = addInputField(this.modSpecificDiv,   "频率7 (Hz)", "446081250");
+            this.inputFreq8 = addInputField(this.modSpecificDiv,   "频率8 (Hz)", "446093750");
+            this.inputFreq9 = addInputField(this.modSpecificDiv,   "频率9 (Hz)", "446106250");
+            this.inputFreq10 = addInputField(this.modSpecificDiv,  "频率10 (Hz)", "446118750");
         }
 
         apply(firmwareData) {
@@ -500,7 +499,7 @@ modClasses = [
     ,
     class Mod_AMOnAllBands extends FirmwareMod {
         constructor() {
-            super("AM on all Bands", "For some reason, the original firmware only allows the AM setting to work on band 2. This mod allows AM to work on any band.", 0);
+            super("所有频段启用AM", "出于某种原因，原始固件仅允许AM设置在F2频段上工作。这个 Mod 允许AM在任何频段上工作。", 0);
         }
 
         apply(firmwareData) {
