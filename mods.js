@@ -1,8 +1,8 @@
 modClasses = [
     class Mod_Example extends FirmwareMod {
         constructor() {
-            super("Example Mod", "This mod does absolutely nothing and is used as an example for implementing new mods", 0); // Add name, description and size (additional flash used, 0 for most mods)
-
+            super("Example Mod", "This mod does absolutely nothing and is used as an example for implementing new mods. It is hidden for convenience, not because it does anything risky.", 0); // Add name, description and size (additional flash used, 0 for most mods)
+            this.hidden = true; // Set this to true for high-risk mods such as the "Enable TX everywhere" mod
             // Customize the mod-specific div with input elements
             // There is a helper function for adding input fields easily:
             this.inputField1 = addInputField(this.modSpecificDiv, "Example Mod specific input field 1", "Editable data");
@@ -125,6 +125,44 @@ modClasses = [
             else {
                 log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
             }
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_EnableTXEverywhere extends FirmwareMod {
+        constructor() {
+            super("Enable TX everywhere", "DANGER! Allows transmitting on all frequencies. Only use this mod for testing, do not transmit on illegal frequencies!", 0);
+            this.hidden = true;
+        }
+
+        apply(firmwareData) {
+            const offset = 0x180e;
+            const oldData = hexString("cf2a");
+            const newData = hexString("5de0");
+            if (compareSection(firmwareData, oldData, offset)) {
+                firmwareData = replaceSection(firmwareData, newData, offset);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_EnableTXEverywhereButAirBand extends FirmwareMod {
+        constructor() {
+            super("Enable TX everywhere except Air Band", "DANGER! Allows transmitting on all frequencies except air band (118 - 137 MHz). Only use this mod for testing, do not transmit on illegal frequencies!", 0);
+            this.hidden = true;
+        }
+
+        apply(firmwareData) {
+            const offset = 0x1804;
+            const newData = hexString("f0b5014649690968054a914205d3054a914202d20020c04301e00020ffe7f0bdc00db400a00bd100");
+            firmwareData = replaceSection(firmwareData, newData, offset);
+            log(`Success: ${this.name} applied.`);
 
             return firmwareData;
         }

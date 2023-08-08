@@ -166,6 +166,21 @@
                     <li>Click update and wait for the tool to finish.</li>
                     <li>All done, all your settings should still all be intact.</li>
                   </ol>
+                  <h3 class="mt-4">Hidden Mods</h3>
+                  <p>There are some mods that are not listed in the mod list for safety reasons, which can be enabled here. Please consider the following warnings:</p>
+                  <ul>
+                    <li><b>ONLY USE TX MODS IF YOU UNDERSTAND THE CONCEPT OF HARMONICS, AND HAVE THE EQUIPMENT TO APPROPRIATELY FILTER THEM!</b></li>
+                    <li><b>DO NOT - UNDER ANY CIRCUMSTANCES - TRANSMIT ON THE AIR BAND OR INTEFERE WITH OTHER CRITICAL INFRASTRUCTURE!</b></li>
+                    <li>Transmitting on illegal frequencies can result in heavy fines or even jail time.</li>
+                    <li>The radio hardware is only designed for VHF and UHF, poorly so. Enabling TX on other frequencies does not change that fact.
+                      On frequencies outside of the VHF and UHF bands, the radio will have a very low output power and a very high SWR, which can damage the radio.
+                      Even worse, the radio will output a LOT of harmonics, on the outer parts of the spectrum, the harmonics even get stronger than the carrier signal. 
+                      <b>For example, transmitting on CB bands will transmit useless amounts of power on CB (microwatts), while emitting significant amounts of power on several other frequencies.</b></li>
+                    </li>
+                    <li>You take full responsibility for your actions!</li>
+                  </ul>
+                  <p>If you agree to these warning and terms, you may now show the hidden mods by <a onclick="showHiddenMods()" class="card-link" style="cursor: pointer;"><b>clicking here.</b></a></p>
+                  <p>The mods will show up on the mod list with a red border and title.</p>
                 </div>
 
               </div>
@@ -243,7 +258,7 @@
                       </span>
                       <span class="text w-100">Save firmware</span>
                     </a>
-                    <a id="flashButton" class="btn btn-dark btn-icon-split disabled w-100">
+                    <a id="flashButton" onclick="startFlasher()" class="btn btn-dark btn-icon-split disabled w-100">
                       <span class="icon text-white-50">
                         <i class="fab fa-usb"></i>
                       </span>

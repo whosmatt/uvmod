@@ -4,6 +4,7 @@ class FirmwareMod {
     this.description = description;
     this.size = size; // Additional flash usage in bytes
     this.enabled = false; // Checkbox status, initially disabled
+    this.hidden = false; // If true, the mod will be hidden until activated in the instructions panel. Use this for risky mods. 
     this.modSpecificDiv = document.createElement("div"); // Div for mod-specific inputs
     // If needed, create input fields here and append them to the modSpecificDiv
   }
@@ -19,6 +20,9 @@ function addModToUI(mod, modDiv) {
   // Create a card div
   const card = document.createElement("div");
   card.classList.add("card", "mb-3", "border-left-primary", "border-left-secondary");
+  if (mod.hidden) {
+    card.classList.add("hiddenMod", "d-none", "border-danger");
+  }
 
   // Create a card body div
   const cardBody = document.createElement("div");
@@ -52,6 +56,9 @@ function addModToUI(mod, modDiv) {
   // Create name column
   const nameCol = document.createElement("div");
   nameCol.classList.add("col-auto", "mr-auto", "pl-1");
+  if (mod.hidden) {
+    nameCol.classList.add("text-danger");
+  }
 
   const nameText = document.createElement("h5");
   nameText.textContent = mod.name;
@@ -88,6 +95,14 @@ function addModToUI(mod, modDiv) {
 
   // Add the card to the modDiv
   modDiv.appendChild(card);
+}
+
+
+function showHiddenMods() {
+  const hiddenMods = document.getElementsByClassName("hiddenMod");
+  for (const mod of hiddenMods) {
+    mod.classList.remove("d-none");
+  }
 }
 
 

@@ -1,4 +1,3 @@
-
 const useDefaultFirmwareCheckbox = document.getElementById('useDefaultFirmware');
 const customFileInputDiv = document.getElementById('customFileInputDiv');
 const customFileInput = document.getElementById('customFileInput');
@@ -47,6 +46,10 @@ customFileInput.addEventListener('change', function () {
   }
 });
 
+
+let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
+let rawFirmware = null; // stores the raw firmware data for qsflash.js
+
 function patch() {
   log("");
   const file = useDefaultFirmwareCheckbox.checked
@@ -70,16 +73,19 @@ function patch() {
     .then((encoded_firmware) => {
       const unpacked_firmware = unpack(encoded_firmware);
 
-      log(`Detected firmware version: ${new TextDecoder().decode(versionInfo.subarray(0, versionInfo.indexOf(0)))}`);
+      log(`Detected firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
       
       // Adjust firmware version to allow cross flashing
       const newVersionChar = document.getElementById("firmwareVersionSelect").value;
       const newVersionCharCode = newVersionChar.charCodeAt(0);
-      versionInfo[0] = newVersionCharCode;
-      log(`Modified firmware version: ${new TextDecoder().decode(versionInfo.subarray(0, versionInfo.indexOf(0)))}`);
+      rawVersion[0] = newVersionCharCode;
+      log(`Modified firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
 
       // Apply mods to unpacked firmware
       const patched_firmware = applyMods(unpacked_firmware);
+
+      // Save raw firmware for qsflash.js
+      rawFirmware = patched_firmware;
 
       // Check size
       const current_size = patched_firmware.length;
@@ -95,14 +101,15 @@ function patch() {
       // Save encoded firmware to file
       const fwPackedBlob = new Blob([packed_firmware]);
       const fwPackedURL = URL.createObjectURL(fwPackedBlob);
-      const downloadLink = document.getElementById('downloadButton');
-      downloadLink.href = fwPackedURL;
-      downloadLink.download = 'fw_modded.bin'; // TODO: Generate name based on mods
-      downloadLink.classList.remove('disabled');
+      const downloadButton = document.getElementById('downloadButton');
+      downloadButton.href = fwPackedURL;
+      downloadButton.download = 'fw_modded.bin'; // TODO: Generate name based on mods
+      downloadButton.classList.remove('disabled');
+      //document.getElementById('flashButton').classList.remove('disabled');
     })
     .catch((error) => {
       console.error(error);
-      log('Error occurred while loading firmware.');
+      log('Error while patching firmware, check log above or developer console for details.');
     });
 }
 
