@@ -89,7 +89,7 @@ function patch() {
 
       // Check size
       const current_size = patched_firmware.length;
-      const max_size = 61440;
+      const max_size = 0xEFFF;
       const percentage = (current_size / max_size) * 100;
       log(`Patched firmware uses ${percentage.toFixed(2)}% of available memory (${current_size}/${max_size} bytes).`);
       if (current_size > max_size) {
