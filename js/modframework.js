@@ -21,7 +21,7 @@ function addModToUI(mod, modDiv) {
   const card = document.createElement("div");
   card.classList.add("card", "mb-3", "border-left-primary", "border-left-secondary");
   if (mod.hidden) {
-    card.classList.add("hiddenMod", "d-none", "border-danger");
+    card.classList.add("hiddenMod", "d-none", "border-danger", "border-left-danger");
   }
 
   // Create a card body div
