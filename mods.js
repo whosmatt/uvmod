@@ -421,13 +421,13 @@ modClasses = [
     ,
     class Mod_FrequencyRangeSimple extends FirmwareMod {
         constructor() {
-            super("Larger Frequency Range", "Changes the lower limit of Band 1 to 18 MHz and the upper limit of Band 7 to 999 MHz for RX. TX ranges are not affected. ", 0);
+            super("Larger Frequency Range", "Changes the lower limit of Band 1 to 18 MHz and the upper limit of Band 7 to 1300 MHz for RX. TX ranges are not affected. ", 0);
         }
 
         apply(firmwareData) {
             const offset = 0xe074;
             const oldData = hexString("404b4c0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd0200879303");
-            const newData = hexString("40771b0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd02f6e0f505");
+            const newData = hexString("40771b0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd0280a4bf07");
             if (compareSection(firmwareData, oldData, offset)) {
                 firmwareData = replaceSection(firmwareData, newData, offset);
                 log(`Success: ${this.name} applied.`);
