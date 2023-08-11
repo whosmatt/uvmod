@@ -105,7 +105,7 @@ function patch() {
       downloadButton.href = fwPackedURL;
       downloadButton.download = 'fw_modded.bin'; // TODO: Generate name based on mods
       downloadButton.classList.remove('disabled');
-      //document.getElementById('flashButton').classList.remove('disabled');
+      document.getElementById('flashButton').classList.remove('disabled');
     })
     .catch((error) => {
       console.error(error);

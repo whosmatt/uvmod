@@ -133,11 +133,24 @@ function applyMods(firmware) {
   return firmware;
 }
 
-function log(message) {
+function log(message, replace = false) {
   const consoleArea = document.getElementById('console');
 
+  if (replace) {
+    // Replace the last line with the new message
+    const lastLineIndex = consoleArea.value.lastIndexOf('\n');
+    consoleArea.value = consoleArea.value.substring(0, lastLineIndex) + '\n' + message;
+  } else {
   // Append the new message to the existing content and add a newline
-  consoleArea.value += message + '\n';
+
+  // If the console is empty, dont add a newline
+  if (consoleArea.value.length === 0) {
+    consoleArea.value = message;
+  } else {
+
+  consoleArea.value += '\n' + message;
+  }
+  }
 
   // Scroll to the bottom to show the latest message
   consoleArea.scrollTop = consoleArea.scrollHeight;
