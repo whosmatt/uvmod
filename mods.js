@@ -16,6 +16,43 @@ modClasses = [
         }
     }
     ,
+    class Mod_RSSI extends FirmwareMod {
+        constructor() {
+            super("RSSI", "Experimental mod. Adds a battery voltage readout in the status bar. Replaces the signal strength meter with a numerical RSSI readout and adds another optional element: You can choose to either have an s-meter with bargraph (signal strength in 6dB increments) or an RSSI graph showing RSSI over time. WARNING: This mod has a bug which allows TX on all bands above 174 MHz.", "2250 or 1424");
+
+            this.selectSbar = addRadioButton(this.modSpecificDiv, "Select S-Meter, uses 2250 Bytes of additional Flash", "selectSbar", "selectRSSI");
+            this.selectGraph = addRadioButton(this.modSpecificDiv, "Select RSSI Graph, uses 1424 Bytes of additional Flash CURRENTLY BROKEN", "selectGraph", "selectRSSI");
+            this.selectSbar.checked = true;
+            this.selectGraph.disabled = true; // currently broken, doesnt boot and python variant of the mod doesnt seem to do anything
+
+        }
+
+        apply(firmwareData) {
+            firmwareData = replaceSection(firmwareData, hexString("e7e50000"), 0x0004); // replace reset handler
+            firmwareData = replaceSection(firmwareData, hexString("1de70000"), 0x003c); // replace systick handler
+            firmwareData = replaceSection(firmwareData, hexString("02e0"), 0x14bc); // remove old signal strength meter
+
+
+            // sbar size 2242 + 8 = 2250
+            const dataSbar = hexString("10b5064c2378002b07d1054b002b02d0044800e000bf0123237010bda813002000000000c0000000044b10b5002b03d00349044800e000bf10bdc04600000000ac130020c00000000023c25c0133002afbd1581e704700207047d308db015918e0239b00994207d807231a40063b93404068425c134343547047406840187047002070470a00303a0300d0b2092805d900202d2901d15868463070470720424358688018f9e708207047072070470020704770477047e02210b500214068920000f095fb10bd10b5d523984710bd0000f8b5c36804005a1cc260c72a4cd9294b002519780123ff3948424841217c9943014304202174244909688b432349db000978890001400b43217c083081430b432374530709d123681868a84205d02100036808315b68984705006668002e1bd0e368db0718d4164b9847217ec7b28f420ad063695868ff2917d1002803d0390003689b68984727762100336830001b68083198470543edb2ab0701d5094b9847eb0701d5084b9847f8bd0028ebd00368db68e7e735080020001006401e0a0020b9b0000039b60000b1b60000f7b5040004265f20144fb8470190a068002809d0237b628a023b9a4204da801801a9022200f00cfb638a013e02339bb2f6b26382002ee6d1257bab420dd30b202674b84702002068002806d06368002b03d0d2062900d20f9847f7bd61a9000070b51a4c2378002b05d100f0b5fa00f0c3fa01232370164b1b68db071fd5154d2b7c012b1bd13f20134ca047c021030089010b408b4203d00143104b3f2098470c20a047c3070ad502200c4b002198470220a047c30402d52800fff7a1ff0848fff738ff074b984770bdc0462414002000100640e813002061a9000001af0000cc13002099c30000f8b5040040680d0000281fd003685b68984707002068218903689b6898470600606829000368db6898470200002e05d039003000002f0bd000f08efa606829000368db68984723891b1823810020f8bd00f08bfaf2e770b506000d0000242800fff7b0fe844206d2295d30000134fff7c7ffe4b2f3e770bdf0b50c00002187b017000190072204a81e00039100f06dfa002c04da2d210198fff7b2ff6442194b0093002319000822d21a974219dc009a126a94460022a44503dc60460132241af9e7302084469444654603a8c554002a02d0002900d11900009a0133043a0092e1e703ab002901d130221a70002e02d00921c91b891b01985918fff7acff07b0f0bdc04664ed0000f0b50c0087b00da909781600e3180caa0500127805910193802b01dd802301936b461b790393b3180293382b01dd382302936b4637001b7a0493049b9f4210d228683a00036821005b689847039b2868591e03683a005b68c9b201379847ffb2ebe72700039b9f4210d228683900036832005b689847049b28685a1e036839005b68d2b201379847ffb2ebe7059b002b13d0019b0134e4b2013b9c420dda771c029bffb2013b9f42f3da28683a00036821005b6898470137f2e707b0f0bd0000f0b50b7a04000d0087b01b0700d511e10b681b68002b06d0874b01201b78002b34d007b0f0bd83685a1c82605b07f3d0824b834e1a6801235209934343740c20b047b4467f49830702d4627c002a01d000220a700a787c480a2a06d82f7a01263b003340029337423ed00178002900d0e0e00124754b04708022186800f091f92b7a234200d0d5e00220cae7704b01201b78002bc5d16f4b1d88fa239b009d4200d96d4d142200216c4800f07af94d236b4c02222900200023814c3bfff7f8fe02226021674800f06cf958230022290020002381563bfff7ebfe05226249634800f056f901209ce7029b01320a700370627c002a5ed06f20e0473f220d2382435343a2819b11514fa37380220021386800f047f90c23e65ec023554d5b002b81002e03dd20212800fff786fe0323002231002800fff7bcfe637c002b53d03e680f2230004b49233000f022f93300343621331a78d2431a700133b342f9d1a37b1c1c0d2b00d90d24e4b2029b9c428bd06b46029a1b7a062a00d90623052102980133dbb2009300271f2341430820009a029e9a1a3b00b0427f41403104332800d2b2c9b20197fff7cbfe029b0133dbb20293dae76720e0474008c0b20200a023a03a181a2c49029b12b20d780133dbb2a84203da01310d2bf7d1013391b2090a227361738fe7a37b05ae032230002349039300f0cdf83868039b08222330092b0fd91f4900f0c4f830237370039b27333370ac23ff33310028002b81fff737fe9de7184900f0b4f8039b3033337020237370eee70020f4e6ea0600200010064061a90000a5130020a413002020140020e306002006040020e7030000d106002098130020d9060020aed40000eb0600208c13002062d4000054ed00001eed00009dd30000b5d30000164b1749174a19605a60174b174a18481a60184a5a60184a506011600022174917484a600a600a744a821649083008608a600a8214494b6014494b60144b15495a601960da60191d1a74ff3299605b611a76114b114a1a607047c046c41300202ced0000040700201814002044ed00008406002020d6000010140020e81300208ced0000fc1300208c13002098130020cc13002088ed00002014002084080020044b054a0548834202d202ca02c3fae77047c0468c130020c8ed0000a613002070b500260c4d0d4c641ba410a64209d1002600f06df80a4d0a4c641ba410a64205d170bdb300eb5898470136eee7b300eb5898470136f2e7bced0000bced0000bced0000c4ed0000002310b59a4200d110bdcc5cc4540133f8e703008218934200d1704719700133f9e7202000000000000000000000000077e500007be500009be50000d7e500000000000000000000a1e50000a5e50000c7e50000cbe500008d87817b756f69635d53493f35000000010000000a00000064000000e803000010270000a086010040420f008096980000e1f505fc1300200000000000000000cfe500006de90000d3e50000d5e50000f8b5c046f8bc08bc9e467047f8b5c046f8bc08bc9e46704749e50000f5eb000021e50000c4130020000000000000000010140020000000000000000001ff");
+            // graph size 1416 + 8 = 1424
+            const dataGraph = hexString("10b5064c2378002b07d1054b002b02d0044800e000bf0123237010bd9413002000000000c0000000044b10b5002b03d00349044800e000bf10bdc0460000000098130020c00000000023c25c0133002afbd1581e70470000002243088b4274d303098b425fd3030a8b4244d3030b8b4228d3030c8b420dd3ff22090212ba030c8b4202d31212090265d0030b8b4219d300e0090ac30b8b4201d3cb03c01a5241830b8b4201d38b03c01a5241430b8b4201d34b03c01a5241030b8b4201d30b03c01a5241c30a8b4201d3cb02c01a5241830a8b4201d38b02c01a5241430a8b4201d34b02c01a5241030a8b4201d30b02c01a5241cdd2c3098b4201d3cb01c01a524183098b4201d38b01c01a524143098b4201d34b01c01a524103098b4201d30b01c01a5241c3088b4201d3cb00c01a524183088b4201d38b00c01a524143088b4201d34b00c01a5241411a00d20146524110467047ffe701b5002000f006f802bdc0460029f7d076e770477047c04600207047d308db015918e0239b00994207d807231a40063b93404068425c134343547047406840187047002070470a00303a0300d0b2092805d900202d2901d15868463070470720424358688018f9e70820704707207047e02210b500214068920000f064f910bd10b5d523984710bdf8b5040040680d0000281fd003685b68984707002068218903689b6898470600606829000368db6898470200002e05d039003000002f0bd000f038f9606829000368db68984723891b1823810020f8bd00f035f9f2e70000f0b5594b8bb003934b680025069303ab07936b469d84554b0c68554a1b6805af0600049405920895db0729d50c20736998475049830700d50d700b784e4a142b04d83220ff30205cff281bd11578002d16d1012304981370813080222900ff3000f001f960222900444800f0fcf8444b1d703223ff33e35cff2b01d0b36998470bb0f0bd01330b70002313706a468133ff3301ad93843b4905222800089700f0d9f86720736998474008c0b20028e7d0a02826d920236030c4b22b7064212000fff7aefe30300a2168702000fff7a8fe0a21c0b2fff72aff3031a97020000a21fff724ff00273031e9702800fff790fe87420cd2e95d07a80137fff755ffffb2f3e760246442241a2d23e4b2d5e71c4f3b78203b5f2b01d920233b7007235c431c413d781549221c4819e4b220389c4200d91a1cd2b29a1aff231341db4303707b2d08d800232a0018001f3a8a18d0540133042bfbd104986022a130ff30013500f078f83d7089e7dce9000000100640f4e900008c1300208d130020b013002010140020cee9000010b50e4c2378002b05d100f02bf800f039f8012323700a4b19684a1c1a60094b4b4309498b4205d8c82a03d907490848fff722ff074b984710bdc0461c14002090130020efeeeeee1111111104ea00001cea000099c30000014b5a1c5a60704714140020044b054a0548834202d202ca02c3fae77047c0468c130020a0ea00009413002070b500260c4d0d4c641ba410a64209d1002600f081f80a4d0a4c641ba410a64205d170bdb300eb5898470136eee7b300eb5898470136f2e794ea000094ea000094ea00009cea0000002310b59a4200d110bdcc5cc4540133f8e703008218934200d1704719700133f9e7673030300000000000000000000091e6000095e60000b5e60000e9e600000000000000000000bbe60000bfe60000e1e60000e5e600000407002020d6000048d30000b303002084060020060400204d870000edd0000001d1000045be000001af000061a9000039b60000b9b00000e9c600000d8700004d8600007da6000019a50000cda7000029010000bdaa0000d5aa0000d91c00003da6000095a70000b1b60000119c0000d500000099c30000f8b5c046f8bc08bc9e467047f8b5c046f8bc08bc9e46704749e5000039e9000021e50000ff01000001000000");
+
+            if (this.selectSbar.checked) {
+                firmwareData = replaceSection(firmwareData, dataSbar, firmwareData.length);
+
+                log(`Success: ${this.name} S-Meter applied.`);
+            }
+            else if (this.selectGraph.checked) {
+                firmwareData = replaceSection(firmwareData, dataGraph, firmwareData.length);
+
+                log(`Success: ${this.name} Graph applied.`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
     class Mod_BatteryIcon extends FirmwareMod {
         constructor() {
             super("Battery icon", "Changes the battery icon to a more normal looking variant.", 0);
@@ -37,26 +74,176 @@ modClasses = [
         }
     }
     ,
-    class Mod_ChangeContrast extends FirmwareMod {
+    class Mod_CustomBootscreen extends FirmwareMod {
         constructor() {
-            super("LCD Contrast", "Changes LCD contrast to any value from 0 to 63 (higher is darker). The default value is 31", 0);
+            super("Custom Bootscreen", "Changes the bootscreen of the radio to an image, displayed for 2 seconds on startup. The PONMSG setting in the menu is ignored, custom bootscreen is always shown. Images are automatically compressed by removing blank space on top and bottom. Make a narrow banner if you need to save space. ", "up to 1024");
 
-            this.contrastValue = addInputField(this.modSpecificDiv, "Enter a new contrast value from 0-63:", "31");
+            this.selectTrollface = addRadioButton(this.modSpecificDiv, "Troll Face (933 Bytes)", "selectTrollface", "selectBootscreen");
+            this.selectQ = addRadioButton(this.modSpecificDiv, "Quansheng Q Logo (929 Bytes)", "selectQ", "selectBootscreen");
+            this.selectUVMOD = addRadioButton(this.modSpecificDiv, "UVMOD Banner (214 Bytes)", "selectUVMOD", "selectBootscreen");
+            this.selectCustomFile = addRadioButton(this.modSpecificDiv, "Custom image (will be converted and compressed automatically, ideal size 128x64)", "selectCustom", "selectBootscreen");
+            this.selectTrollface.checked = true;
+
+            const fileInputDiv = document.createElement("div");
+            fileInputDiv.classList.add("custom-file", "mt-2", "d-none");
+            this.customFileInput = document.createElement("input");
+            this.customFileInput.className = "custom-file-input";
+            this.customFileInput.type = "file";
+            this.customFileInput.accept = "image/bmp,image/jpeg,image/png";
+            this.customFileLabel = document.createElement("label");
+            this.customFileLabel.className = "custom-file-label";
+            this.customFileLabel.innerText = "Choose image file";
+            this.customFileLabel.for = "customFileInput";
+            fileInputDiv.appendChild(this.customFileInput);
+            fileInputDiv.appendChild(this.customFileLabel);
+            this.canvas = document.createElement("canvas");
+            this.canvas.classList.add("mt-3", "mr-3", "border", "shadow-sm");
+            this.canvas.width = 128;
+            this.canvas.height = 64;
+            this.canvas2 = this.canvas.cloneNode();
+            fileInputDiv.appendChild(this.canvas);
+            fileInputDiv.appendChild(this.canvas2);
+            this.modSpecificDiv.appendChild(fileInputDiv);
+
+            this.selectCustomFile.parentElement.parentElement.addEventListener("change", () => {
+                fileInputDiv.classList.toggle("d-none", !this.selectCustomFile.checked);
+            });
+
+
+
+            this.customImageData = new Uint8Array(1024);
+            this.customFileInput.onchange = () => {
+                const file = this.customFileInput.files[0];
+                this.customFileLabel.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = this.canvas;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, 128, 64);
+                        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                        function getPixel(x, y) {
+                            const index = y * 128 + x;
+                            const i = index * 4;
+                            return imageData[i] + imageData[i + 1] + imageData[i + 2] > 128 * 3 ? 0 : 1;
+                        }
+
+                        // run canvas content through getPixel and output to canvas2
+                        const canvas2 = this.canvas2;
+                        const ctx2 = canvas2.getContext('2d');
+                        const imageData2 = ctx2.getImageData(0, 0, canvas2.width, canvas2.height);
+                        for (let y = 0; y < 64; y++) {
+                            for (let x = 0; x < 128; x++) {
+                                const index = y * 128 + x;
+                                const i = index * 4;
+                                const pixel = !getPixel(x, y);
+                                imageData2.data[i] = pixel * 255;
+                                imageData2.data[i + 1] = pixel * 255;
+                                imageData2.data[i + 2] = pixel * 255;
+                                imageData2.data[i + 3] = 255;
+                            }
+                        }
+                        ctx2.putImageData(imageData2, 0, 0);
+
+                        const outputArray = new Uint8Array(1024);
+                        // getPixel(i) outputs the pixel value for any x y coordinate. 0 = black, 1 = white.
+                        // the outputArray is 1024 bytes, where each byte is 8 pixels IN VERTICAL ORDER.
+
+                        let i = 0;
+                        for (let y = 0; y < 64; y += 8) {
+                            for (let x = 0; x < 128; x++) {
+                                let byte = 0;
+                                for (let i = 0; i < 8; i++) {
+                                    byte |= getPixel(x, y + i) << i;
+                                }
+                                outputArray[i++] = byte;
+                            }
+                        }
+
+                        
+                        this.customImageData.set(outputArray);
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            };
         }
 
         apply(firmwareData) {
-            const minValue = 0;
-            const maxValue = 63;
-            const inputValue = parseInt(this.contrastValue.value);
+            let imageData = null;
 
-            if (!isNaN(inputValue) && inputValue >= minValue && inputValue <= maxValue) {
-                const newData = new Uint8Array([inputValue]);
-                firmwareData = replaceSection(firmwareData, newData, 0xb7b0);
+            // images have to be 1024 bytes exactly, where each byte is 8 pixels. 128x64 pixels = 1024 bytes
+            // this mod optimizes the image data by removing empty lines from top and bottom. leave lots of empty space on top and bottom for the smallest size. 
+            if (this.selectTrollface.checked) {
+                imageData = hexString("00000000000000000000000000000000000000000000000000000000000000000000008080c040602020b0b090909818383838282c2c2c2cacac8c8c0c1c1c545454541414148484242404440c8c0c0c0c0c0c08183070e08000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080c0fc06030101000000110800040000000000000414000000000000000000000800808080c0c0c2c2c2c0c1c5808a0405081204000000000000030f3ce08000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f0f89c26132984d4c4c44040c08084060785850d0f0f0f0e0efcfc18080000000000000e1f3319190c0c0c0707377767c7c58d8f8ec0ca6064743030901414363666c383060c8c1870c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000073fffc02228400080f07efec08383030321001038183c764383818080000020303030346404647c1880888880c0c860606070b0f018180c0c86c6e2fb7e0c0c0800391f80400f80e07f0e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003ffe00000fffffff3f8ffe3c3e3fedec6c6c4ccccfcfccdcdccc4c4fcfec6c6c6c2c3c3e3e3fff9f1707838381c1c0e7fffc7c373390d07030000000000c071180e0603010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c0ff000000000f3f777fdfc7dfffe7879fffe787070f3fff070707070783ff8383818181c1c0c0c77f78303018980c4e0703a1804000a080c06030381c06030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ff870000001020404004888090918101010101018181818101010101014141111111212108101484c8ca606534321a19090c0406020301010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000103060c1810303020206060606060606020202030303010101818080c0c0c0c0c040606020301010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+            }
+            else if (this.selectQ.checked) {
+                imageData = hexString("0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008080c0c0c0e0e0c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008080c0e0f0f0f8fcfefefeffffff7f7f3f3f1f1f1f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080c0f0f8fcfeffffffff7f3f1f0f0f0703030180c0c0e0f0f0f8f8f8fcf880000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080e0f8feffffffffff3f1f0703010080c0e0f0f8fcfeffff7f7f3f1f1f0f0707070301818080c0c0c0c0c0e0c0e0c0e0c0c0c0808000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000081e3f3f3f3f3f3f0f0300000000f0fcfeffffffff3f1f0703010080c0e0f0f8fcfcfeff7f3f3f3f1f1f1f1f1f1f1f3f7ffffffffffffffffcf000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080f0fcffffffffffffff07010000000000000000000080c0e0f8ffffffffff7f3f0f01000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001f3f7ffffffffffffffffefefcfcfcfcfcfefeffffffff9f9f8f870303000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010101030103030307070f0f0f1f1f1f1f1f0f07030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+            }
+            else if (this.selectUVMOD.checked) {
+                imageData = hexString("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FFFFFF000000000000FFFFFF00000000FFFFFF000000000000FFFFFF00000000FFFFFF7CF8F0F87CFFFFFF00000000FCFEFF0F070707070FFFFEFC00000000FFFFFF07070707070FFFFEFC00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003F7FFFF0E0E0E0E0F0FF7F3F000000000F1F3F7CF8F0F0F87C3F1F0F00000000FFFFFF0001010100FFFFFF000000003F7FFFF0E0E0E0E0F0FF7F3F00000000FFFFFFE0E0E0E0E0F0FF7F3F0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000");
+            }
+            else if (this.selectCustomFile.checked) {
+                imageData = this.customImageData;
+            }
+            if (imageData.length !== 1024) throw new Error("Image data must be exactly 1024 bytes.");
+
+            // this uses the shellcode from custom_bootscreen_narrow
+            let shellcode = hexString("30B5002206490748F6F72AFB064A07490748F6F713FB01F0ADFD01F06FFD30BD0004000084060020CCCCCCCCBBBBBBBBAAAAAAAA");
+
+            // remove empty lines from top
+            let offsetLines = 0;
+            for (let i = 0; i < 64; i++) {
+                if (imageData.slice(i * 16, i * 16 + 16).every(pixel => pixel === 0)) {
+                    offsetLines++;
+                } else {
+                    break;
+                }
+            }
+            imageData = imageData.slice(offsetLines * 16);
+
+            // truncate all zero bytes from the end of the image data
+            let endIndex = imageData.length;
+            while (endIndex > 0 && imageData[endIndex - 1] === 0) {
+                endIndex--;
+            }
+            imageData = imageData.subarray(0, endIndex);
+
+            // now we can patch the shellcode with the right values
+            const shellcodeDataView = new DataView(shellcode.buffer);
+
+            shellcodeDataView.setUint32(1 * -4 + shellcode.length, 0x20000684 + offsetLines * 16, true); // set destination address inside displaybuffer shifted by the amount of removed empty lines
+            shellcodeDataView.setUint32(2 * -4 + shellcode.length, firmwareData.length, true); // set source address to the end of the firmware where the image will be stored
+            shellcodeDataView.setUint32(3 * -4 + shellcode.length, imageData.length, true); // set length of the image data
+
+            firmwareData = replaceSection(firmwareData, shellcode, 0x9b3c);
+            firmwareData = replaceSection(firmwareData, hexString("0001"), 0xd1f0); // patch bootscreen duration to 2 seconds
+            firmwareData = replaceSection(firmwareData, imageData, firmwareData.length);
+
+            log(`Success: ${this.name} applied using ${imageData.length} bytes of extra space.`);
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_SkipBootscreen extends FirmwareMod {
+        constructor() {
+            super("Skip Bootscreen", "Skips the bootscreen and instantly goes to the main screen on powerup.", 0);
+        }
+
+        apply(firmwareData) {
+            const offset = 0xd1e6;
+            const oldData = hexString("fcf7a9fc");
+            const newData = hexString("00bf00bff8f7b9fb00f002f8");
+            if (compareSection(firmwareData, oldData, offset)) {
+                firmwareData = replaceSection(firmwareData, newData, offset);
                 log(`Success: ${this.name} applied.`);
             }
             else {
-                log(`ERROR in ${this.name}: Contrast value must be a number from 0-63!`);
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
             }
+
             return firmwareData;
         }
     }
@@ -84,6 +271,27 @@ modClasses = [
             }
 
             log(`Success: ${this.name} applied.`);
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_NegativeDisplay extends FirmwareMod {
+        constructor() {
+            super("Negative Display", "Inverts the colors on the display.", 0);
+        }
+
+        apply(firmwareData) {
+            const offset = 0xb798;
+            const oldData = hexString("a6");
+            const newData = hexString("a7");
+            if (compareSection(firmwareData, oldData, offset)) {
+                firmwareData = replaceSection(firmwareData, newData, offset);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+
             return firmwareData;
         }
     }
@@ -189,27 +397,6 @@ modClasses = [
         }
     }
     ,
-    class Mod_SkipBootscreen extends FirmwareMod {
-        constructor() {
-            super("Skip Bootscreen", "Skips the bootscreen and instantly goes to the main screen on powerup.", 0);
-        }
-
-        apply(firmwareData) {
-            const offset = 0xd1e6;
-            const oldData = hexString("fcf7a9fc");
-            const newData = hexString("00bf00bff8f7b9fb00f002f8");
-            if (compareSection(firmwareData, oldData, offset)) {
-                firmwareData = replaceSection(firmwareData, newData, offset);
-                log(`Success: ${this.name} applied.`);
-            }
-            else {
-                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
-            }
-
-            return firmwareData;
-        }
-    }
-    ,
     class Mod_MenuStrings extends FirmwareMod {
         constructor() {
             super("Menu strings", "Changes text in the settings menu. The displayed JSON contains every string with offset, description and size. Only edit the string and dont use more characters than allowed by the size.", 0);
@@ -299,27 +486,6 @@ modClasses = [
         }
     }
     ,
-    class Mod_NegativeDisplay extends FirmwareMod {
-        constructor() {
-            super("Negative Display", "Inverts the colors on the display.", 0);
-        }
-
-        apply(firmwareData) {
-            const offset = 0xb798;
-            const oldData = hexString("a6");
-            const newData = hexString("a7");
-            if (compareSection(firmwareData, oldData, offset)) {
-                firmwareData = replaceSection(firmwareData, newData, offset);
-                log(`Success: ${this.name} applied.`);
-            }
-            else {
-                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
-            }
-
-            return firmwareData;
-        }
-    }
-    ,
     class Mod_RogerBeep extends FirmwareMod {
         constructor() {
             super("Roger Beep", "Changes the pitch of the two roger beep tones. Tone 1 plays for 150ms and tone 2 for 80ms. The defaults in this mod are similar to the Mototrbo beep. The maximum is 6347 Hz. ", 0);
@@ -352,43 +518,6 @@ modClasses = [
             }
             else {
                 log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
-            }
-
-            return firmwareData;
-        }
-    }
-    ,
-    class Mod_RSSI extends FirmwareMod {
-        constructor() {
-            super("RSSI", "Experimental mod. Adds a battery voltage readout in the status bar. Replaces the signal strength meter with a numerical RSSI readout and adds another optional element: You can choose to either have an s-meter with bargraph (signal strength in 6dB increments) or an RSSI graph showing RSSI over time. WARNING: This mod has a bug which allows TX on all bands above 174 MHz.", "2250 or 1424");
-
-            this.selectSbar = addRadioButton(this.modSpecificDiv, "Select S-Meter, uses 2250 Bytes of additional Flash", "selectSbar", "selectRSSI");
-            this.selectGraph = addRadioButton(this.modSpecificDiv, "Select RSSI Graph, uses 1424 Bytes of additional Flash CURRENTLY BROKEN", "selectGraph", "selectRSSI");
-            this.selectSbar.checked = true;
-            this.selectGraph.disabled = true; // currently broken, doesnt boot and python variant of the mod doesnt seem to do anything
-
-        }
-
-        apply(firmwareData) {
-            firmwareData = replaceSection(firmwareData, hexString("e7e50000"), 0x0004); // replace reset handler
-            firmwareData = replaceSection(firmwareData, hexString("1de70000"), 0x003c); // replace systick handler
-            firmwareData = replaceSection(firmwareData, hexString("02e0"), 0x14bc); // remove old signal strength meter
-
-
-            // sbar size 2242 + 8 = 2250
-            const dataSbar = hexString("10b5064c2378002b07d1054b002b02d0044800e000bf0123237010bda813002000000000c0000000044b10b5002b03d00349044800e000bf10bdc04600000000ac130020c00000000023c25c0133002afbd1581e704700207047d308db015918e0239b00994207d807231a40063b93404068425c134343547047406840187047002070470a00303a0300d0b2092805d900202d2901d15868463070470720424358688018f9e708207047072070470020704770477047e02210b500214068920000f095fb10bd10b5d523984710bd0000f8b5c36804005a1cc260c72a4cd9294b002519780123ff3948424841217c9943014304202174244909688b432349db000978890001400b43217c083081430b432374530709d123681868a84205d02100036808315b68984705006668002e1bd0e368db0718d4164b9847217ec7b28f420ad063695868ff2917d1002803d0390003689b68984727762100336830001b68083198470543edb2ab0701d5094b9847eb0701d5084b9847f8bd0028ebd00368db68e7e735080020001006401e0a0020b9b0000039b60000b1b60000f7b5040004265f20144fb8470190a068002809d0237b628a023b9a4204da801801a9022200f00cfb638a013e02339bb2f6b26382002ee6d1257bab420dd30b202674b84702002068002806d06368002b03d0d2062900d20f9847f7bd61a9000070b51a4c2378002b05d100f0b5fa00f0c3fa01232370164b1b68db071fd5154d2b7c012b1bd13f20134ca047c021030089010b408b4203d00143104b3f2098470c20a047c3070ad502200c4b002198470220a047c30402d52800fff7a1ff0848fff738ff074b984770bdc0462414002000100640e813002061a9000001af0000cc13002099c30000f8b5040040680d0000281fd003685b68984707002068218903689b6898470600606829000368db6898470200002e05d039003000002f0bd000f08efa606829000368db68984723891b1823810020f8bd00f08bfaf2e770b506000d0000242800fff7b0fe844206d2295d30000134fff7c7ffe4b2f3e770bdf0b50c00002187b017000190072204a81e00039100f06dfa002c04da2d210198fff7b2ff6442194b0093002319000822d21a974219dc009a126a94460022a44503dc60460132241af9e7302084469444654603a8c554002a02d0002900d11900009a0133043a0092e1e703ab002901d130221a70002e02d00921c91b891b01985918fff7acff07b0f0bdc04664ed0000f0b50c0087b00da909781600e3180caa0500127805910193802b01dd802301936b461b790393b3180293382b01dd382302936b4637001b7a0493049b9f4210d228683a00036821005b689847039b2868591e03683a005b68c9b201379847ffb2ebe72700039b9f4210d228683900036832005b689847049b28685a1e036839005b68d2b201379847ffb2ebe7059b002b13d0019b0134e4b2013b9c420dda771c029bffb2013b9f42f3da28683a00036821005b6898470137f2e707b0f0bd0000f0b50b7a04000d0087b01b0700d511e10b681b68002b06d0874b01201b78002b34d007b0f0bd83685a1c82605b07f3d0824b834e1a6801235209934343740c20b047b4467f49830702d4627c002a01d000220a700a787c480a2a06d82f7a01263b003340029337423ed00178002900d0e0e00124754b04708022186800f091f92b7a234200d0d5e00220cae7704b01201b78002bc5d16f4b1d88fa239b009d4200d96d4d142200216c4800f07af94d236b4c02222900200023814c3bfff7f8fe02226021674800f06cf958230022290020002381563bfff7ebfe05226249634800f056f901209ce7029b01320a700370627c002a5ed06f20e0473f220d2382435343a2819b11514fa37380220021386800f047f90c23e65ec023554d5b002b81002e03dd20212800fff786fe0323002231002800fff7bcfe637c002b53d03e680f2230004b49233000f022f93300343621331a78d2431a700133b342f9d1a37b1c1c0d2b00d90d24e4b2029b9c428bd06b46029a1b7a062a00d90623052102980133dbb2009300271f2341430820009a029e9a1a3b00b0427f41403104332800d2b2c9b20197fff7cbfe029b0133dbb20293dae76720e0474008c0b20200a023a03a181a2c49029b12b20d780133dbb2a84203da01310d2bf7d1013391b2090a227361738fe7a37b05ae032230002349039300f0cdf83868039b08222330092b0fd91f4900f0c4f830237370039b27333370ac23ff33310028002b81fff737fe9de7184900f0b4f8039b3033337020237370eee70020f4e6ea0600200010064061a90000a5130020a413002020140020e306002006040020e7030000d106002098130020d9060020aed40000eb0600208c13002062d4000054ed00001eed00009dd30000b5d30000164b1749174a19605a60174b174a18481a60184a5a60184a506011600022174917484a600a600a744a821649083008608a600a8214494b6014494b60144b15495a601960da60191d1a74ff3299605b611a76114b114a1a607047c046c41300202ced0000040700201814002044ed00008406002020d6000010140020e81300208ced0000fc1300208c13002098130020cc13002088ed00002014002084080020044b054a0548834202d202ca02c3fae77047c0468c130020c8ed0000a613002070b500260c4d0d4c641ba410a64209d1002600f06df80a4d0a4c641ba410a64205d170bdb300eb5898470136eee7b300eb5898470136f2e7bced0000bced0000bced0000c4ed0000002310b59a4200d110bdcc5cc4540133f8e703008218934200d1704719700133f9e7202000000000000000000000000077e500007be500009be50000d7e500000000000000000000a1e50000a5e50000c7e50000cbe500008d87817b756f69635d53493f35000000010000000a00000064000000e803000010270000a086010040420f008096980000e1f505fc1300200000000000000000cfe500006de90000d3e50000d5e50000f8b5c046f8bc08bc9e467047f8b5c046f8bc08bc9e46704749e50000f5eb000021e50000c4130020000000000000000010140020000000000000000001ff");
-            // graph size 1416 + 8 = 1424
-            const dataGraph = hexString("10b5064c2378002b07d1054b002b02d0044800e000bf0123237010bd9413002000000000c0000000044b10b5002b03d00349044800e000bf10bdc0460000000098130020c00000000023c25c0133002afbd1581e70470000002243088b4274d303098b425fd3030a8b4244d3030b8b4228d3030c8b420dd3ff22090212ba030c8b4202d31212090265d0030b8b4219d300e0090ac30b8b4201d3cb03c01a5241830b8b4201d38b03c01a5241430b8b4201d34b03c01a5241030b8b4201d30b03c01a5241c30a8b4201d3cb02c01a5241830a8b4201d38b02c01a5241430a8b4201d34b02c01a5241030a8b4201d30b02c01a5241cdd2c3098b4201d3cb01c01a524183098b4201d38b01c01a524143098b4201d34b01c01a524103098b4201d30b01c01a5241c3088b4201d3cb00c01a524183088b4201d38b00c01a524143088b4201d34b00c01a5241411a00d20146524110467047ffe701b5002000f006f802bdc0460029f7d076e770477047c04600207047d308db015918e0239b00994207d807231a40063b93404068425c134343547047406840187047002070470a00303a0300d0b2092805d900202d2901d15868463070470720424358688018f9e70820704707207047e02210b500214068920000f064f910bd10b5d523984710bdf8b5040040680d0000281fd003685b68984707002068218903689b6898470600606829000368db6898470200002e05d039003000002f0bd000f038f9606829000368db68984723891b1823810020f8bd00f035f9f2e70000f0b5594b8bb003934b680025069303ab07936b469d84554b0c68554a1b6805af0600049405920895db0729d50c20736998475049830700d50d700b784e4a142b04d83220ff30205cff281bd11578002d16d1012304981370813080222900ff3000f001f960222900444800f0fcf8444b1d703223ff33e35cff2b01d0b36998470bb0f0bd01330b70002313706a468133ff3301ad93843b4905222800089700f0d9f86720736998474008c0b20028e7d0a02826d920236030c4b22b7064212000fff7aefe30300a2168702000fff7a8fe0a21c0b2fff72aff3031a97020000a21fff724ff00273031e9702800fff790fe87420cd2e95d07a80137fff755ffffb2f3e760246442241a2d23e4b2d5e71c4f3b78203b5f2b01d920233b7007235c431c413d781549221c4819e4b220389c4200d91a1cd2b29a1aff231341db4303707b2d08d800232a0018001f3a8a18d0540133042bfbd104986022a130ff30013500f078f83d7089e7dce9000000100640f4e900008c1300208d130020b013002010140020cee9000010b50e4c2378002b05d100f02bf800f039f8012323700a4b19684a1c1a60094b4b4309498b4205d8c82a03d907490848fff722ff074b984710bdc0461c14002090130020efeeeeee1111111104ea00001cea000099c30000014b5a1c5a60704714140020044b054a0548834202d202ca02c3fae77047c0468c130020a0ea00009413002070b500260c4d0d4c641ba410a64209d1002600f081f80a4d0a4c641ba410a64205d170bdb300eb5898470136eee7b300eb5898470136f2e794ea000094ea000094ea00009cea0000002310b59a4200d110bdcc5cc4540133f8e703008218934200d1704719700133f9e7673030300000000000000000000091e6000095e60000b5e60000e9e600000000000000000000bbe60000bfe60000e1e60000e5e600000407002020d6000048d30000b303002084060020060400204d870000edd0000001d1000045be000001af000061a9000039b60000b9b00000e9c600000d8700004d8600007da6000019a50000cda7000029010000bdaa0000d5aa0000d91c00003da6000095a70000b1b60000119c0000d500000099c30000f8b5c046f8bc08bc9e467047f8b5c046f8bc08bc9e46704749e5000039e9000021e50000ff01000001000000");
-
-            if (this.selectSbar.checked) {
-                firmwareData = replaceSection(firmwareData, dataSbar, firmwareData.length);
-
-                log(`Success: ${this.name} S-Meter applied.`);
-            }
-            else if (this.selectGraph.checked) {
-                firmwareData = replaceSection(firmwareData, dataGraph, firmwareData.length);
-
-                log(`Success: ${this.name} Graph applied.`);
             }
 
             return firmwareData;
@@ -488,16 +617,16 @@ modClasses = [
     class Mod_NOAAFrequencies extends FirmwareMod {
         constructor() {
             super("NOAA Frequencies", "The NOAA scan feature is unique because it can scan in the background, all the time. However, most people dont need the weather alerts or dont have NOAA in their country. This mod lets you change the frequencies so you can use the NOAA scan function for something else, but keep in mind that the radio needs the 1050hz tone burst to open squelch. The values below are pre-set to the first 10 PMR446 channels. ", 0);
-            this.inputFreq1 = addInputField(this.modSpecificDiv,   "Frequency 1 (Hz)", "446006250");
-            this.inputFreq2 = addInputField(this.modSpecificDiv,   "Frequency 2 (Hz)", "446018750");
-            this.inputFreq3 = addInputField(this.modSpecificDiv,   "Frequency 3 (Hz)", "446031250");
-            this.inputFreq4 = addInputField(this.modSpecificDiv,   "Frequency 4 (Hz)", "446043750");
-            this.inputFreq5 = addInputField(this.modSpecificDiv,   "Frequency 5 (Hz)", "446056250");
-            this.inputFreq6 = addInputField(this.modSpecificDiv,   "Frequency 6 (Hz)", "446068750");
-            this.inputFreq7 = addInputField(this.modSpecificDiv,   "Frequency 7 (Hz)", "446081250");
-            this.inputFreq8 = addInputField(this.modSpecificDiv,   "Frequency 8 (Hz)", "446093750");
-            this.inputFreq9 = addInputField(this.modSpecificDiv,   "Frequency 9 (Hz)", "446106250");
-            this.inputFreq10 = addInputField(this.modSpecificDiv,  "Frequency 10 (Hz)", "446118750");
+            this.inputFreq1 = addInputField(this.modSpecificDiv, "Frequency 1 (Hz)", "446006250");
+            this.inputFreq2 = addInputField(this.modSpecificDiv, "Frequency 2 (Hz)", "446018750");
+            this.inputFreq3 = addInputField(this.modSpecificDiv, "Frequency 3 (Hz)", "446031250");
+            this.inputFreq4 = addInputField(this.modSpecificDiv, "Frequency 4 (Hz)", "446043750");
+            this.inputFreq5 = addInputField(this.modSpecificDiv, "Frequency 5 (Hz)", "446056250");
+            this.inputFreq6 = addInputField(this.modSpecificDiv, "Frequency 6 (Hz)", "446068750");
+            this.inputFreq7 = addInputField(this.modSpecificDiv, "Frequency 7 (Hz)", "446081250");
+            this.inputFreq8 = addInputField(this.modSpecificDiv, "Frequency 8 (Hz)", "446093750");
+            this.inputFreq9 = addInputField(this.modSpecificDiv, "Frequency 9 (Hz)", "446106250");
+            this.inputFreq10 = addInputField(this.modSpecificDiv, "Frequency 10 (Hz)", "446118750");
         }
 
         apply(firmwareData) {
@@ -561,6 +690,30 @@ modClasses = [
                 log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
             }
 
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_ChangeContrast extends FirmwareMod {
+        constructor() {
+            super("LCD Contrast", "Changes LCD contrast to any value from 0 to 63 (higher is darker). The default value is 31", 0);
+
+            this.contrastValue = addInputField(this.modSpecificDiv, "Enter a new contrast value from 0-63:", "31");
+        }
+
+        apply(firmwareData) {
+            const minValue = 0;
+            const maxValue = 63;
+            const inputValue = parseInt(this.contrastValue.value);
+
+            if (!isNaN(inputValue) && inputValue >= minValue && inputValue <= maxValue) {
+                const newData = new Uint8Array([inputValue]);
+                firmwareData = replaceSection(firmwareData, newData, 0xb7b0);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Contrast value must be a number from 0-63!`);
+            }
             return firmwareData;
         }
     }
