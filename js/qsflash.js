@@ -212,7 +212,7 @@ async function sendPacket(port, data) {
         // prepare packet
         const packet = packetize(data);
         // send packet
-        console.log('Sending packet:', packet);
+        //console.log('Sending packet:', packet);
 
         await writer.write(packet);
         // close writer
@@ -320,6 +320,11 @@ async function flashFirmware(port, firmware) {
 async function startFlasher() {
     flashButton = document.getElementById('flashButton');
     flashButton.classList.add('disabled');
+    if (rawFirmware.length > 0xefff) {
+        log('Firmware file is too large. Aborting.');
+        flashButton.classList.remove('disabled');
+        return;
+    }
     log('Connecting to the serial port...');
     const port = await connect();
     if (!port) {
@@ -329,7 +334,7 @@ async function startFlasher() {
     }
 
     try {
-        const data = await readPacket(port, 0x18);
+        const data = await readPacket(port, 0x18, 5000);
         if (data[0] == 0x18) {
             console.log('Received 0x18 packet. Radio is ready for flashing.');
             console.log('0x18 packet data: ', data);
