@@ -287,7 +287,7 @@ function addInputField(parentDiv, labelText, defaultValue) {
  */
 function addRadioButton(parentDiv, labelText, id, name) {
   const formCheckDiv = document.createElement("div");
-  formCheckDiv.classList.add("form-check");
+  formCheckDiv.classList.add("form-check", "mt-2");
 
   const inputElement = document.createElement("input");
   inputElement.classList.add("form-check-input");
