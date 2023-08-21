@@ -24,9 +24,9 @@ modClasses = [
             this.selectGraph = addRadioButton(this.modSpecificDiv, "RSSI and RSSI Graph on the main screen. By @piotr022, v78.", "selectGraph", "selectApp");
             this.selectSpectr = addRadioButton(this.modSpecificDiv, "Spectrum analyzer. Starts with the flashlight button. Up / down (hold) - change the center frequency, 8/2 - zoom in / out, 1/7 - increase / decrease resolution, PTT / EXIT - exit. After exiting, open the menu to refresh the screen. By @piotr022, v78.", "selectSpectr", "selectApp");
             this.selectSpectrM = addRadioButton(this.modSpecificDiv, "Advanced spectrum analyzer. Starts with the flashlight button. Before starting, either turn off the noise reduction (SQL to 0) or turn on the monitoring mode. Up / down - frequency change, 1/7 - sensitivity (measurement time), 2/8 - frequency step, 9/3 - zoom in / out, * / F (hold) - noise reduction level, 5 - backlight, 0 - ignore frequency, EXIT - exit. After exiting, open the menu to refresh the screen. By @fagci, v66.", "selectSpectrM", "selectApp");
-            this.selectMessenger = addRadioButton(this.modSpecificDiv, "CURRENTLY BROKEN (Invisible letters) - Text messenger (digital transmission). Starts with the flashlight button. Use the number keys in T9 style for typing a message, MENU - send, EXIT - clear message or exit if message is empty. To confirm a letter (if you need to reuse the same number key), press *. By @piotr022, v78.", "selectMessenger", "selectApp");
+            this.selectMessenger = addRadioButton(this.modSpecificDiv, "Text messenger (digital transmission). Starts with the flashlight button. Use the number keys in T9 style for typing a message, MENU - send, EXIT - clear message or exit if message is empty. To confirm a letter (if you need to reuse the same number key), press *. By @piotr022, v78.", "selectMessenger", "selectApp");
             this.selectPong = addRadioButton(this.modSpecificDiv, "Pong game (first ever mod app). Starts after boot. By @piotr022, v78.", "selectPong", "selectApp");
-            this.selectSpectrM.checked = true;
+            this.selectSbar.checked = true;
         }
 
         apply(firmwareData) {
@@ -39,37 +39,37 @@ modClasses = [
             const dataPong = hexString("10B5064C2378002B07D1054B002B02D0044800E000BF0123237010BD9013002000000000C0000000044B10B5002B03D00349044800E000BF10BDC0460000000094130020C0000000002243088B4274D303098B425FD3030A8B4244D3030B8B4228D3030C8B420DD3FF22090212BA030C8B4202D31212090265D0030B8B4219D300E0090AC30B8B4201D3CB03C01A5241830B8B4201D38B03C01A5241430B8B4201D34B03C01A5241030B8B4201D30B03C01A5241C30A8B4201D3CB02C01A5241830A8B4201D38B02C01A5241430A8B4201D34B02C01A5241030A8B4201D30B02C01A5241CDD2C3098B4201D3CB01C01A524183098B4201D38B01C01A524143098B4201D34B01C01A524103098B4201D30B01C01A5241C3088B4201D3CB00C01A524183088B4201D38B00C01A524143088B4201D34B00C01A5241411A00D20146524110467047FFE701B5002000F006F802BDC0460029F7D076E770477047C04600207047D308DB015918E0239B00994207D807231A40063B93404068425C134343547047406840187047002070470A00303A0300D0B2092805D900202D2901D15868463070470720424358688018F9E70820704707207047E02210B500214068920000F0BCF910BD10B5F1F7F3FC10BDF0B50C0087B00DA909781600E3180CAA0500127805910193802B01DD802301936B461B790393B3180293382B01DD382302936B4637001B7A0493049B9F4210D228683A00036821005B689847039B2868591E03683A005B68C9B201379847FFB2EBE72700039B9F4210D228683900036832005B689847049B28685A1E036839005B68D2B201379847FFB2EBE7059B002B13D0019B0134E4B2013B9C420DDA771C029BFFB2013B9F42F3DA28683A00036821005B6898470137F2E707B0F0BDF8B5040040680D0000281FD003685B68984707002068218903689B6898470600606829000368DB6898470200002E05D039003000002F0BD000F031F9606829000368DB68984723891B1823810020F8BD00F02EF9F2E7F0B5060042363378040087B0002B00D183E0FFF75FFF484B0593FCF74BFC05000D2801D10023337064212800FFF79AFE05AE30300A2130702800FFF793FE0A21FFF716FF3031280071700A21FFF710FFEDB23031A36AB1700B2D4DD1002B01DD013BA362E369606B226AC118A36BA56A9A18E1612262002907DCAA4212DBE66BAE19B2420EDC40426063E06A814202DB606B40426063002A02DD206B824201DB5B42A363636A260001270393072310363000D2B2C9B200930197FFF717FF6B46197B1423EAB2009330000E3B0197FFF70DFF220000230832238362611C0005AD2800F1F76BFC84420FDA295D30000134FFF75BFFE4B2F2E70C2DB3D1226BE16B521A9A42AEDD0133ABE70C4A136801331360DB0503D4FCF78DFE07B0F0BDE0200023074C800019190A680433D2430A608342F8D1EFE7C04630303000AC1300200407002010B50C4C2378002B05D100F047F800F055F80123237008490A68531C0B60D20704D4C82B02D90548FFF748FFFDF710FD10BDC046F41300208C130020B01300202020114B114A40215A60114A18621A60104AE2209A60104AD961DA6000225A611A835A6216329A626A32DA6219637F3A2C39D9631B61991C5A639A6340014233C8871A707047C046B01300200407002078EA000090EA000020D60000044B054A0548834202D202CA02C3FAE77047C0468C130020C4EA00009013002070B500260C4D0D4C641BA410A64209D1002600F043F80A4D0A4C641BA410A64205D170BDB300EB5898470136EEE7B300EB5898470136F2E7B8EA0000B8EA0000B8EA0000C0EA0000002310B59A4200D110BDCC5CC4540133F8E703008218934200D1704719700133F9E70000000000000000000081E6000085E60000A5E60000D9E600000000000000000000ABE60000AFE60000D1E60000D5E60000F8B5C046F8BC08BC9E467047F8B5C046F8BC08BC9E46704749E5000089E9000021E5000001000000");
 
             if (this.selectSbar.checked) {
-                firmwareData = replaceSection(firmwareData, hexString("45E6000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E0000002DE70000100000001100000012000000130000001400000015000000160000001700000018000000190000001A0000001B0000001C0000001D0000001E0000001F000000200000002100000022000000230000002400000025000000260000002700000028000000290000002A0000002B0000002C0000002D0000002E0000002F0000000348854600F044FB0048004749D10000"), 0x0004);
+                firmwareData = replaceSection(firmwareData, hexString("45E6000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E0000002DE7"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataSbar, firmwareData.length);
 
                 log(`Success: ${this.name} applied: RSSI-Sbar.`);
             }
             else if (this.selectGraph.checked) {
-                firmwareData = replaceSection(firmwareData, hexString("E9E6000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000D9E80000100000001100000012000000130000001400000015000000160000001700000018000000190000001A0000001B0000001C0000001D0000001E0000001F000000200000002100000022000000230000002400000025000000260000002700000028000000290000002A0000002B0000002C0000002D0000002E0000002F0000000348854600F044FB0048004749D10000"), 0x0004);
+                firmwareData = replaceSection(firmwareData, hexString("E9E6000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000D9E8"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataGraph, firmwareData.length);
 
                 log(`Success: ${this.name} applied: RSSI-Graph.`);
             }
             else if (this.selectSpectr.checked) {
-                firmwareData = replaceSection(firmwareData, hexString("CDE9000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000CDE60000100000001100000012000000130000001400000015000000160000001700000018000000190000001A0000001B0000001C0000001D0000001E0000001F000000200000002100000022000000230000002400000025000000260000002700000028000000290000002A0000002B0000002C0000002D0000002E0000002F0000000348854600F044FB0048004749D10000"), 0x0004);
+                firmwareData = replaceSection(firmwareData, hexString("CDE9000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000CDE6"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataSpectr, firmwareData.length);
 
                 log(`Success: ${this.name} applied: Spectrum (piotr022).`);
             }
             else if (this.selectSpectrM.checked) {
-                firmwareData = replaceSection(firmwareData, hexString("79EE000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E0000001DE80000100000001100000012000000130000001400000015000000160000001700000018000000190000001A0000001B0000001C0000001D0000001E0000001F000000200000002100000022000000230000002400000025000000260000002700000028000000290000002A0000002B0000002C0000002D0000002E0000002F0000000348854600F044FB0048004749D10000"), 0x0004);
+                firmwareData = replaceSection(firmwareData, hexString("79EE000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E0000001DE8"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataSpectrM, firmwareData.length);
 
                 log(`Success: ${this.name} applied: Advanced Spectrum (fagci).`);
             }
             else if (this.selectMessenger.checked) {
-                firmwareData = replaceSection(firmwareData, hexString("09EB000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000B5E50000100000001100000012000000130000001400000015000000160000001700000018000000190000001A0000001B0000001C0000001D0000001E0000001F000000200000002100000022000000230000002400000025000000260000002700000028000000290000002A0000002B0000002C0000002D0000002E0000002F0000000348854600F044FB0048004749D10000"), 0x0004);
+                firmwareData = replaceSection(firmwareData, hexString("09EB000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E000000B5E5"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataMessenger, firmwareData.length);
 
                 log(`Success: ${this.name} applied: Messenger.`);
             }
             else if (this.selectPong.checked) {
-                firmwareData = replaceSection(firmwareData, hexString("E9E6000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E00000049E90000100000001100000012000000130000001400000015000000160000001700000018000000190000001A0000001B0000001C0000001D0000001E0000001F000000200000002100000022000000230000002400000025000000260000002700000028000000290000002A0000002B0000002C0000002D0000002E0000002F0000000348854600F044FB0048004749D10000"), 0x0004);
+                firmwareData = replaceSection(firmwareData, hexString("E9E6000002000000030000000400000005000000060000000700000008000000090000000A0000000B0000000C0000000D0000000E00000049E9"), 0x0004);
                 firmwareData = replaceSection(firmwareData, dataPong, firmwareData.length);
 
                 log(`Success: ${this.name} applied: Pong.`);
@@ -406,22 +406,37 @@ modClasses = [
         }
     }
     ,
-    class Mod_DoubleBacklightDuration extends FirmwareMod {
+    class Mod_BacklightDuration extends FirmwareMod {
         constructor() {
-            super("Double Backlight Duration", "Always multiplies the backlight duration set on the radio by 2. A set value of 5 would then corresponds to 10 seconds of backlight.", 0);
+            super("Backlight Duration", "Sets a multiplier for the backlight duration.", 0);
+
+            this.select1 = addRadioButton(this.modSpecificDiv, "1x - up to 5s backlight (default value)", "select1", "selectBacklightDuration");
+            this.select2 = addRadioButton(this.modSpecificDiv, "2x - up to 10s backlight", "select2", "selectBacklightDuration");
+            this.select4 = addRadioButton(this.modSpecificDiv, "4x - up to 20s backlight", "select4", "selectBacklightDuration");
+            this.select8 = addRadioButton(this.modSpecificDiv, "8x - up to 40s backlight", "select8", "selectBacklightDuration");
+            this.select2.checked = true;
         }
 
         apply(firmwareData) {
             const offset = 0x5976;
-            const oldData = hexString("40");
-            const newData = hexString("80");
-            if (compareSection(firmwareData, oldData, offset)) {
-                firmwareData = replaceSection(firmwareData, newData, offset);
-                log(`Success: ${this.name} applied.`);
+            const buffer = new ArrayBuffer(4);
+            const dataView = new DataView(buffer);
+            if (this.select1.checked) {
+                dataView.setUint32(0, 64, true);
             }
-            else {
-                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            else if (this.select2.checked) {
+                dataView.setUint32(0, 128, true);
             }
+            else if (this.select4.checked) {
+                dataView.setUint32(0, 192, true);
+            }
+            else if (this.select8.checked) {
+                dataView.setUint32(0, 256, true);
+            }
+
+            const newData = new Uint8Array(buffer);
+            firmwareData = replaceSection(firmwareData, newData, offset);
+            log(`Success: ${this.name} applied.`);
 
             return firmwareData;
         }
@@ -695,6 +710,32 @@ modClasses = [
         }
     }
     ,
+    /*
+    class Mod_ChangeToneBurst extends FirmwareMod { // thanks to spm81
+        constructor() {
+            super("1750Hz Tone Frequency", "The 1750Hz button sends a 1750Hz activation tone by default. To open NOAA channels (in combination with the NOAA frequencies mod on the receiving unit), you can use this mod to send a 1050Hz tone. Common repeater tone pulse frequencies are 1000Hz, 1450Hz, 1750Hz, 2100Hz", 0);
+            this.toneValue = addInputField(this.modSpecificDiv, "Enter a new Tone Burst value in Hz from 1000-3950:", "1750");
+        }
+
+        apply(firmwareData) {
+            const minValue = 1000;
+            const maxValue = 3950;
+            const inputValue = parseInt(this.toneValue.value);
+
+            if (!isNaN(inputValue) && inputValue >= minValue && inputValue <= maxValue) {
+                const newData = new Uint8Array([inputValue]);
+                console.log(newData);
+                firmwareData = replaceSection(firmwareData, newData, 0x29cc);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Repeater Tone Burst must be a Tone Freq. in Hz from 1000-3950 Hz!`);
+            }
+            return firmwareData;
+        }
+    }
+    ,
+    */
     class Mod_AMOnAllBands extends FirmwareMod {
         constructor() {
             super("AM RX on all Bands", "For some reason, the original firmware only allows the AM setting to work on band 2. This mod allows AM to work on any band.", 0);
@@ -714,6 +755,81 @@ modClasses = [
                 firmwareData = replaceSection(firmwareData, newData1, offset1);
                 firmwareData = replaceSection(firmwareData, newData2, offset2);
                 firmwareData = replaceSection(firmwareData, newData3, offset3);
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_CustomFm_radio extends FirmwareMod {
+        constructor() {
+            super("FM Radio Frequencies", "Changes the FM radio frequency range", "0");
+
+            this.select6476mhz = addRadioButton(this.modSpecificDiv, "64 - 76 MHz", "select6476mhz", "selectFm_radio");
+            this.select87108mhz = addRadioButton(this.modSpecificDiv, "86.4 - 108 MHz", "select87108mhz", "selectFm_radio");
+            this.select88108mhz = addRadioButton(this.modSpecificDiv, "88 - 108 MHz", "select88108mhz", "selectFm_radio");
+
+            this.select87108mhz.checked = true;
+        }
+
+        apply(firmwareData) {
+            if (this.select6476mhz.checked) {
+                const Reg05 = hexString("df0a0000");
+                const MOVSR0 = hexString("5020c000");
+                const MOVSR1 = hexString("5f21");
+
+                firmwareData = replaceSection(firmwareData, MOVSR0, 0xa2f4);
+                firmwareData = replaceSection(firmwareData, Reg05, 0xa274);
+                firmwareData = replaceSection(firmwareData, MOVSR0, 0x6452);
+                firmwareData = replaceSection(firmwareData, MOVSR1, 0x6456);
+            }
+            if (this.select87108mhz.checked) {
+                const Reg05 = hexString("5f0a0000");
+                const MOVSR0 = hexString("6c20c000");
+                firmwareData = replaceSection(firmwareData, Reg05, 0xa274);
+                firmwareData = replaceSection(firmwareData, MOVSR0, 0x6452);
+            }
+            else if (this.select88108mhz.checked) {
+                const Reg05 = hexString("5f0a0000");
+                const MOVSR0 = hexString("6e20c000");
+                firmwareData = replaceSection(firmwareData, Reg05, 0xa274);
+                firmwareData = replaceSection(firmwareData, MOVSR0, 0x6452);
+            }
+            log(`Success: ${this.name} applied.`);
+            return firmwareData;
+
+        }
+    }
+    ,
+    class Mod_AirCopy extends FirmwareMod {
+        constructor() {
+            super("AIR COPY Frequency", "Changes the frequency used by AIR COPY. The default value is 410.025 MHz. ", 0);
+            this.inputFreq1 = addInputField(this.modSpecificDiv, "Air Copy Frequency (Hz)", "410025000");
+
+        }
+
+        apply(firmwareData) {
+            const offset = 0x5568;
+            const freq = Math.trunc(parseInt(this.inputFreq1.value) * 0.1);
+
+            if (freq <= 0x04a67102 ) {
+                // Create an 8-byte buffer with the specified values
+                const buffer = new ArrayBuffer(4);
+                const dataView = new DataView(buffer);
+
+                dataView.setUint32(0, freq, true);
+
+                // Convert the buffer to a Uint8Array
+                const freqHex = new Uint8Array(buffer);
+
+                // Replace the 8-byte section at the offset with the new buffer
+                firmwareData = replaceSection(firmwareData, freqHex, offset);
+                //firmwareData = replaceSection(firmwareData, hexString("96"), 0xae9a);
+
                 log(`Success: ${this.name} applied.`);
             }
             else {
