@@ -2,7 +2,7 @@
 modClasses = [
  class Mod_APP extends FirmwareMod {
         constructor() {
-            super("Aplicações", "Adiciona um aplicativo da lista para escolher:", "(Depende do FirmwareMod selecionado) ?");
+            super("Aplicações", "Adiciona um aplicativo da lista para escolher:", "(Depende da aplicação selecionada) ?");
 
             this.selectSbar = addRadioButton(this.modSpecificDiv, "S-meter (níveis de 6dB) + voltímetro da bateria na barra de status. Por @piotr022, v78.", "selectSbar", "selectApp");
             this.selectGraph = addRadioButton(this.modSpecificDiv, "Balança RSSI com saída de valor digital. Por @piotr022, v78.", "selectGraph", "selectApp");
@@ -66,7 +66,7 @@ modClasses = [
     }
     ,
 
-    class Mod_Example extends FirmwareMod {
+   /* class Mod_Example extends FirmwareMod {
         constructor() {
             super("Example Mod", "This mod does absolutely nothing and is used as an example for implementing new mods. It is hidden for convenience, not because it does anything risky.", 0); // Add name, description and size (additional flash used, 0 for most mods)
             this.hidden = true; // Set this to true for high-risk mods such as the "Enable TX everywhere" mod
@@ -83,7 +83,7 @@ modClasses = [
         }
     }
     ,
-   /* class Mod_RSSI extends FirmwareMod {
+    class Mod_RSSI extends FirmwareMod {
         constructor() {
             super("RSSI", "Experimental mod. Adds a battery voltage readout in the status bar. Replaces the signal strength meter with a numerical RSSI readout and adds another optional element: You can choose to either have an s-meter with bargraph (signal strength in 6dB increments) or an RSSI graph showing RSSI over time. WARNING: This mod has a bug which allows TX on all bands above 174 MHz.", "2250 or 1424");
 
@@ -515,6 +515,7 @@ modClasses = [
     class Mod_EnableTXEverywhere extends FirmwareMod {
         constructor() {
             super("Habilitar TX em todas as bandas", "PERIGO! Permite a transmissão em todas as frequências. Use este mod apenas para teste, não transmita em frequências ilegais!", 0);
+            this.hidden = true;
             }
 
         apply(firmwareData) {
@@ -536,6 +537,7 @@ modClasses = [
     class Mod_EnableTXEverywhereButAirBand extends FirmwareMod {
         constructor() {
             super("Habilitar TX em todas as bandas excepto Banda Aérea", "PERIGO! Permite a transmissão em todas as frequências excepto Banda Aérea (118 - 137 MHz). Use este mod apenas para teste, não transmita em frequências ilegais!", 0);
+            this.hidden = true;
             
         }
 
@@ -578,7 +580,7 @@ modClasses = [
         }
     }
     ,
-    class Mod_DoubleBacklightDuration extends FirmwareMod {
+   /* class Mod_DoubleBacklightDuration extends FirmwareMod {
         constructor() {
             super("Duração da retroiluminação dupla", "Sempre multiplica a duração da luz de fundo definida no rádio por 2. Um valor definido de 5 corresponderia a 10 segundos de luz de fundo.", 0);
             this.hidden = true;
@@ -600,7 +602,7 @@ modClasses = [
             return firmwareData;
         }
     }
-    ,
+    ,*/
     class Mod_ABR extends FirmwareMod {//just testing...
         constructor() {
             super("Duração do tempo limite da luz de fundo ABR", "Multiplica as configurações do menu ABR do tempo de luz de fundo do LCD por valor (exceto desligado) 1/2/3/4/5 segundos x 2 ou x 4. Um valor de 5 é 10 segundos ou 20 segundos: ", 0);
