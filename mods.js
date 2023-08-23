@@ -569,6 +569,43 @@ modClasses = [
         }
     }
     ,
+    // Mod_Tone_ToneBurst by RE3CON converted/rewritten to java from python mod by IK8JHL mod_change_Tone_1750Hz.py !!! DO Pay propper credits !!!      
+    class Mod_ToneBurst extends FirmwareMod {
+        constructor() {
+            super("Repeater Tone Burst (by RE3CON)", "Changes the Tone by PTT and Side F2 Key, used to open HAM Repeaters and NOAA Channels. The default is 1750 Hz. To open NOAA Ton-Squelch set 1050 Hz. Other not so common repeater tone pulse freq are 1000Hz, 1450Hz, 1750Hz, 2100Hz", 0);
+            this.inputTone = addInputField(this.modSpecificDiv, "Enter a new Tone Burst frequency (Hz)", "1050");
+                    }
+
+        apply(firmwareData) {
+            const offset = 0x29cc;
+                
+            const tone = (this.inputTone.value);
+            
+            if (tone <= 0xffff) {
+                // Create an 8-byte buffer with the specified values
+                const buffer = new ArrayBuffer(8);
+                const dataView = new DataView(buffer);
+
+                // Set tone at their respective offsets
+                dataView.setUint32(0, tone, true); // true indicates little-endian byte order
+                
+                // Convert the buffer to a Uint8Array
+                const toneHex = new Uint8Array(buffer);
+
+                // Replace the 8-byte section at the offset with the new buffer
+                firmwareData = replaceSection(firmwareData, toneHex, offset);
+                
+                log(`Success: ${this.name} applied.`);
+            }
+            else {
+                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            }
+
+            return firmwareData;
+        }
+    }
+    ,
+// Mod_Tone_ToneBurst by RE3CON -- EOT
     class Mod_EnableSWDPort extends FirmwareMod {
         constructor() {
             super("Enable SWD Port", "If you don't know what SWD is, you don't need this mod! Allows debugging via SWD. You will need to solder wires to the main board of the radio and connect them to specialized hardware. ", 0);
