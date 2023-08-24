@@ -103,6 +103,7 @@ function showHiddenMods() {
   for (const mod of hiddenMods) {
     mod.classList.remove("d-none");
   }
+  log("Hidden mods shown. Please pay extra attention when using them.");
 }
 
 
@@ -119,6 +120,12 @@ function modLoader() {
     document.getElementById("modsContainer").appendChild(modDiv);
   });
   log("Patcher ready.");
+
+  // for development purposes, add ?hidden to the url to always show hidden mods
+  if (window.location.href.indexOf("?hidden") > -1) {
+    showHiddenMods();
+  }
+
   return modInstances; // Return the array of mod instances
 }
 
