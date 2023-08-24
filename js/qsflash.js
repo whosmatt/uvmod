@@ -334,7 +334,7 @@ async function startFlasher() {
     }
 
     try {
-        const data = await readPacket(port, 0x18, 5000);
+        const data = await readPacket(port, 0x18, 1000);
         if (data[0] == 0x18) {
             console.log('Received 0x18 packet. Radio is ready for flashing.');
             console.log('0x18 packet data: ', data);
@@ -361,7 +361,7 @@ async function startFlasher() {
         if (error !== 'Reader has been cancelled.') {
             console.error('Error:', error);
         } else {
-            log('No data received, is the radio connected and in flash mode?');
+            log('No data received, is the radio connected and in flash mode? Please try again.');
         }
         return;
 
