@@ -1,21 +1,4 @@
 modClasses = [
-    class Mod_Example extends FirmwareMod {
-        constructor() {
-            super("Example Mod", "This mod does absolutely nothing and is used as an example for implementing new mods. It is hidden for convenience, not because it does anything risky.", 0); // Add name, description and size (additional flash used, 0 for most mods)
-            this.hidden = true; // Set this to true for high-risk mods such as the "Enable TX everywhere" mod
-            // Customize the mod-specific div with input elements
-            // There is a helper function for adding input fields easily:
-            this.inputField1 = addInputField(this.modSpecificDiv, "Example Mod specific input field 1", "Editable data");
-        }
-
-        apply(firmwareData) {
-            log("The value of input field 1 is: " + this.inputField1.value);
-            // Implement the logic to apply the specific mod here
-            // You can use the mod-specific inputs in this.modSpecificDiv
-            return firmwareData;
-        }
-    }
-    ,
     class Mod_APP extends FirmwareMod {
         constructor() {
             super("Apps", "Adds an application to the firmware. Some apps are started with the flashlight button. Due to very limited space available, you can only select one app:", "up to 2770");
@@ -400,6 +383,41 @@ modClasses = [
             const offset = 0x1804;
             const newData = hexString("f0b5014649690968054a914205d3054a914202d20020c04301e00020ffe7f0bdc00db400a00bd100");
             firmwareData = replaceSection(firmwareData, newData, offset);
+            log(`Success: ${this.name} applied.`);
+
+            return firmwareData;
+        }
+    }
+    ,
+    class Mod_CustomTXRange extends FirmwareMod {
+        constructor() {
+            super("Custom TX Range", "DANGER: This mod replaces the TX Disabled check with a simple function that either blocks a range of frequencies and allows all else, or vice versa. It can be used to do the same as 'Enable TX everywhere except Air Band', or it could also be used to make the radio only TX on PMR466. The preset values below are set to block Air Band and allow everything else.", 0);
+            this.hidden = true;
+
+            this.selectBlock = addRadioButton(this.modSpecificDiv, "The frequency range below will be blocked, everything else will be allowed. ", "selectBlock", "selectTXRange");
+            this.selectAllow = addRadioButton(this.modSpecificDiv, "The frequency range below will be allowed, everything else will be blocked. ", "selectAllow", "selectTXRange");
+            this.selectBlock.checked = true;
+            this.selectAllow.parentElement.classList.add("mb-3");
+
+            this.lowFreq = addInputField(this.modSpecificDiv, "Lower Limit (Hz)", "118000000");
+            this.highFreq = addInputField(this.modSpecificDiv, "Upper Limit (Hz)", "137000000");
+        }
+
+        apply(firmwareData) {
+            const offset = 0x1804;
+            let shellcode;
+            if (this.selectBlock.checked) {
+                shellcode = hexString("f0b5014649690968054a914205d3054a914202d20020c04301e00020ffe7f0bd1111111122222222");
+            } else if (this.selectAllow.checked) {
+                shellcode = hexString("F0B5014649690968054A914204D3054A914201D2002002E00020C043FFE7F0BD1111111122222222");
+            }
+            const dataView = new DataView(shellcode.buffer);
+            const lowFreq = Math.floor(this.lowFreq.value / 10);
+            const highFreq = Math.floor(this.highFreq.value / 10);
+            dataView.setUint32(32, lowFreq, true);
+            dataView.setUint32(36, highFreq, true);
+
+            firmwareData = replaceSection(firmwareData, shellcode, offset);
             log(`Success: ${this.name} applied.`);
 
             return firmwareData;
