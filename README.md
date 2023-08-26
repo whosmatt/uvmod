@@ -1,7 +1,7 @@
 # [CLICK HERE TO OPEN UVMOD](https://whosmatt.github.io/uvmod/)
 ## [中文版 Open Chinese Version (maintained independently)](https://uvmod.xanyi.eu.org/)
 ## [Open Russian Version (maintained independently)](https://uvmod.valek.net.ru/)
-## [Open Portugese Version (maintained independently)](https://meshtastic.pt/QuanSheng/)
+## [Open Portuguese Version (maintained independently)](https://meshtastic.pt/QuanSheng/)
 
 ### Info about v26/v27
 
@@ -10,7 +10,7 @@ Depending on the factory calibration of some radios, the TX power above 435MHz c
 v27 fixes this so that the TX power is always correct.
 To see if your unit is affected you can either use a power meter, or you can use a receiver with rssi to check if the output power on the L setting is higher than the output power on the H setting. 
 
-For now, the russian and portugese version of UVMOD includes limited v27 support, so you can use those if your unit is affected.  
+For now, the russian and portuguese version of UVMOD includes limited v27 support, so you can use those if your unit is affected.  
 
 We are working on a mod that fixes this in v26 as well.  
 
