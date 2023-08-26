@@ -36,5 +36,21 @@ The radio spectrum is used by many different people and organizations, some of w
 UVMOD makes it easy and accessible for anyone without any background knowledge to modify the firmware of their radio. __However, certain mods such as TX Unlock mods can not be used legally and safely without a certain amount of background knowledge because the behaviour of these mods is counterintuitive.__  
 UVMOD is designed to hide all high-risk mods behind a information section in the instructions to ensure that users are aware of the risks and consequences.  
 
-__Sadly, there has been one person who has cloned UVMOD and removed all of the safety precautions and warnings.__ The team behind UVMOD and the Quansheng modding scene do not condone this behavior and we strongly advise against using this clone.  
+__Sadly, there has been one person (RE3CON) who has cloned UVMOD and removed all of the safety precautions and warnings.__ The team behind UVMOD and the Quansheng modding scene do not condone this behavior and we strongly advise against using this clone.  
 __Use the links at the top of this file to access all approved versions.__
+
+## Code of Conduct
+
+For the reasons outlined above, we have decided to implement a code of conduct for this project.  
+While we can not stop intentional abuse of the software for illegal purposes, we must at least try to prevent accidental abuse.  
+To accomplish this:
+- Mods are considered dangerous when they can be abused to break the law or cause harm to others.
+- Mods that are considered dangerous must be hidden using the this.hidden property.
+- Mods that are considered dangerous must have a clear description and an unambiguous title.  
+
+Failing to follow the rules above on a fork/clone of the main project may result in a negative public statement and/or a DMCA takedown request from the contributors involved.  
+
+To further improve the quality of the main project, we also ask that you:
+- Only include mods that function correctly and have been tested.  
+- Only include mods that work without side effects (or at least document the side effects in the description).  
+- Avoid putting credit to yourself in the Mod title or description. Any work you do on this project is a collaborative effort building on the work of the people before you, and claiming sole credit for a mod is not in the spirit of this project.  
