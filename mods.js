@@ -611,23 +611,84 @@ modClasses = [
         }
     }
     ,
-    class Mod_FrequencyRangeSimple extends FirmwareMod {
+    class Mod_FrequencyRangeAdvanced extends FirmwareMod {
         constructor() {
-            super("Larger Frequency Range", "Changes the lower limit of Band 1 to 18 MHz and the upper limit of Band 7 to 1300 MHz for RX. TX ranges are not affected. ", 0);
+            super("Custom Frequency Ranges", "Changes the frequency range limits.", 0);
+            this.selectSimple = addRadioButton(this.modSpecificDiv, "Simple Mode: Extend Band 1 down to 18 MHz and Band 7 up to 1300 MHz. This is the maximum frequency range of the chip. ", "selectSimpleMode", "selectFrequencyRange");
+            this.selectCustom = addRadioButton(this.modSpecificDiv, "Custom Mode: Manually edit the frequency ranges. ", "selectCustomMode", "selectFrequencyRange");
+            this.selectSimple.checked = true;
+
+            const customModeDiv = document.createElement("div");
+            customModeDiv.classList.add("d-none", "mt-2");
+
+            // add a brief explanation
+            const explanation = document.createElement("p");
+            explanation.innerText = "You can customize the frequency ranges here. Make sure they are in the correct order and don't overlap. The maximum range is 18 MHz to 1300 MHz, and there is a gap from 630 - 840 MHz, where the chip cannot receive or transmit due to a hardware limitation.";
+            customModeDiv.appendChild(explanation);
+
+            this.band1L = addInputField(customModeDiv, "Band 1 Lower Limit (Hz)", "50000000");
+            this.band1U = addInputField(customModeDiv, "Band 1 Upper Limit (Hz)", "76000000");
+            this.band2L = addInputField(customModeDiv, "Band 2 Lower Limit (Hz)", "108000000");
+            this.band2U = addInputField(customModeDiv, "Band 2 Upper Limit (Hz)", "135999900");
+            this.band3L = addInputField(customModeDiv, "Band 3 Lower Limit (Hz)", "136000000");
+            this.band3U = addInputField(customModeDiv, "Band 3 Upper Limit (Hz)", "173999900");
+            this.band4L = addInputField(customModeDiv, "Band 4 Lower Limit (Hz)", "174000000");
+            this.band4U = addInputField(customModeDiv, "Band 4 Upper Limit (Hz)", "349999900");
+            this.band5L = addInputField(customModeDiv, "Band 5 Lower Limit (Hz)", "350000000");
+            this.band5U = addInputField(customModeDiv, "Band 5 Upper Limit (Hz)", "399999900");
+            this.band6L = addInputField(customModeDiv, "Band 6 Lower Limit (Hz)", "400000000");
+            this.band6U = addInputField(customModeDiv, "Band 6 Upper Limit (Hz)", "469999900");
+            this.band7L = addInputField(customModeDiv, "Band 7 Lower Limit (Hz)", "470000000");
+            this.band7U = addInputField(customModeDiv, "Band 7 Upper Limit (Hz)", "600000000");
+
+            this.modSpecificDiv.appendChild(customModeDiv);
+
+            this.selectCustom.parentElement.parentElement.addEventListener("change", () => {
+                customModeDiv.classList.toggle("d-none", !this.selectCustom.checked);
+            });
         }
 
         apply(firmwareData) {
-            const offset = 0xe074;
-            const oldData = hexString("404b4c0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd0200879303");
-            const newData = hexString("40771b0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd0280a4bf07");
-            if (compareSection(firmwareData, oldData, offset)) {
-                firmwareData = replaceSection(firmwareData, newData, offset);
-                log(`Success: ${this.name} applied.`);
+            if (this.selectSimple.checked) {
+                firmwareData = replaceSection(firmwareData, hexString("40771b0080cba4000085cf00c0800901c00e1602005a6202c029cd0280f77300f684cf00b6800901b60e1602f6596202b629cd0280a4bf07"), 0xE074);
             }
-            else {
-                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+            else if (this.selectCustom.checked) {
+                const lowerFreqs = [
+                    Math.trunc(parseInt(this.band1L.value) * 0.1),
+                    Math.trunc(parseInt(this.band2L.value) * 0.1),
+                    Math.trunc(parseInt(this.band3L.value) * 0.1),
+                    Math.trunc(parseInt(this.band4L.value) * 0.1),
+                    Math.trunc(parseInt(this.band5L.value) * 0.1),
+                    Math.trunc(parseInt(this.band6L.value) * 0.1),
+                    Math.trunc(parseInt(this.band7L.value) * 0.1)
+                ];
+
+                const higherFreqs = [
+                    Math.trunc(parseInt(this.band1U.value) * 0.1),
+                    Math.trunc(parseInt(this.band2U.value) * 0.1),
+                    Math.trunc(parseInt(this.band3U.value) * 0.1),
+                    Math.trunc(parseInt(this.band4U.value) * 0.1),
+                    Math.trunc(parseInt(this.band5U.value) * 0.1),
+                    Math.trunc(parseInt(this.band6U.value) * 0.1),
+                    Math.trunc(parseInt(this.band7U.value) * 0.1)
+                ];
+
+                const buffer = new ArrayBuffer(4 * 7 * 2); // uint32, 7 bands, upper and lower limit
+                const dataView = new DataView(buffer);
+
+                for (let i = 0; i < lowerFreqs.length; i++) {
+                    dataView.setUint32(i * 4, lowerFreqs[i], true);
+                    dataView.setUint32(i * 4 + 28, higherFreqs[i], true); // upper limit table starts right after lower limit table
+                }
+
+                const freqsHex = new Uint8Array(buffer);
+                console.log(freqsHex);
+                console.log(uint8ArrayToHexString(freqsHex));
+
+                firmwareData = replaceSection(firmwareData, freqsHex, 0xE074);
             }
 
+            log(`Success: ${this.name} applied.`);
             return firmwareData;
         }
     }
@@ -729,7 +790,7 @@ modClasses = [
     }
     ,
     /*
-    class Mod_ChangeToneBurst extends FirmwareMod { // thanks to spm81
+    class Mod_ChangeToneBurst extends FirmwareMod {
         constructor() {
             super("1750Hz Tone Frequency", "The 1750Hz button sends a 1750Hz activation tone by default. To open NOAA channels (in combination with the NOAA frequencies mod on the receiving unit), you can use this mod to send a 1050Hz tone. Common repeater tone pulse frequencies are 1000Hz, 1450Hz, 1750Hz, 2100Hz", 0);
             this.toneValue = addInputField(this.modSpecificDiv, "Enter a new Tone Burst value in Hz from 1000-3950:", "1750");
@@ -741,9 +802,13 @@ modClasses = [
             const inputValue = parseInt(this.toneValue.value);
 
             if (!isNaN(inputValue) && inputValue >= minValue && inputValue <= maxValue) {
-                const newData = new Uint8Array([inputValue]);
-                console.log(newData);
-                firmwareData = replaceSection(firmwareData, newData, 0x29cc);
+                const newData = new Uint8Array(4);
+                const dataView = new DataView(newData.buffer);
+                dataView.setUint32(0, inputValue, true);
+
+                console.log(uint8ArrayToHexString(newData)); // value is correct
+
+                firmwareData = replaceSection(firmwareData, newData, 0x29cc); // does not seem to work
                 log(`Success: ${this.name} applied.`);
             }
             else {
@@ -752,8 +817,8 @@ modClasses = [
             return firmwareData;
         }
     }
-    ,
     */
+    ,
     class Mod_AMOnAllBands extends FirmwareMod {
         constructor() {
             super("AM RX on all Bands", "For some reason, the original firmware only allows the AM setting to work on band 2. This mod allows AM to work on any band.", 0);
@@ -834,7 +899,7 @@ modClasses = [
             const offset = 0x5568;
             const freq = Math.trunc(parseInt(this.inputFreq1.value) * 0.1);
 
-            if (freq <= 0x04a67102 ) {
+            if (freq <= 0x04a67102) {
                 // Create an 8-byte buffer with the specified values
                 const buffer = new ArrayBuffer(4);
                 const dataView = new DataView(buffer);
