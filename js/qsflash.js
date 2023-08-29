@@ -121,6 +121,7 @@ async function readPacket(port, expectedData, timeout = 1000) {
                 if (done) {
                     // If `done` is true, then the reader has been cancelled
                     reject('Reader has been cancelled.');
+                    console.log('Reader has been cancelled. Current Buffer:', buffer, uint8ArrayToHexString(buffer));
                     return;
                 }
 
