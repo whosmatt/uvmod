@@ -53,6 +53,7 @@
       left: 0;
       position: absolute;
       top: 0;
+      z-index: 999999;
     }
 
     @keyframes fadeInFromTop {
@@ -421,7 +422,7 @@
     })(jQuery, window);
 
     var marqueeified = false;
-    $("#logo").click(function () {
+    function easterEgg() {
       $('.marquee').toggle();
       if (!marqueeified) {
         $('.marquee').marqueeify({
@@ -433,7 +434,7 @@
         });
         marqueeified = true;
       }
-    });
+    };
   </script>
 
 
