@@ -1,0 +1,93 @@
+<style>
+    @media (min-width: 768px) {
+        .wrapper {
+            display: flex;
+        }
+        .sidebar .sidebar-brand{
+            font-size: 2.5rem;
+            font-weight: 200;
+            padding: 0.5rem 1rem;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .sidebar-brand {
+            font-size: 2.5rem!important;
+            font-weight: 200!important;
+            padding: 0.5rem 0!important;
+            margin-right:auto!important;
+        }
+        .sidebar-divider {
+            display: none!important;
+        }
+        .sidebar-heading {
+            display: none!important;
+        }
+        .navbar-nav {
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            flex-flow: row wrap;
+        }
+        .sidebar {
+            width: 100%;
+            min-height: auto;
+            background-image: none;
+        }
+
+    }
+
+</style>
+
+<nav>
+<ul class="navbar-nav bg-gradient-dark sidebar sidebar-dark accordion fade-in-from-left sticky-top" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand mx-3" style="text-shadow: 0px 0px 5px #ffffffa6;">UVMOD</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Original Firmware
+    </div>
+
+    <!-- Nav Item - Patcher -->
+    <li class="nav-item">
+        <a class="nav-link" href="index.html">
+            <i class="fas fa-fw fa-wrench"></i>
+            <span>Patcher/Flasher</span></a>
+    </li>
+
+    <!-- Nav Item - CPS -->
+    <li class="nav-item">
+        <a class="nav-link disabled" href="cps.html">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Configurator (WIP)</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Open Source
+    </div>
+
+    <!-- Nav Item - cfw Flasher -->
+    <li class="nav-item">
+        <a class="nav-link disabled" href="osfw.html">
+            <i class="fas fa-cloud-download-alt"></i>
+            <span>Flasher (WIP)</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+</ul>
+</nav>
