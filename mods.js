@@ -853,6 +853,8 @@ modClasses = [
             super("FM Radio Frequencies", "Changes the FM radio frequency range", "0");
 
             this.select6476mhz = addRadioButton(this.modSpecificDiv, "64 - 76 MHz", "select6476mhz", "selectFm_radio");
+            this.select64108mhz = addRadioButton(this.modSpecificDiv, "64 - 108 MHz", "select64108mhz", "selectFm_radio");
+            this.select76108mhz = addRadioButton(this.modSpecificDiv, "76 - 108 MHz", "select76108mhz", "selectFm_radio");
             this.select87108mhz = addRadioButton(this.modSpecificDiv, "86.4 - 108 MHz", "select87108mhz", "selectFm_radio");
             this.select88108mhz = addRadioButton(this.modSpecificDiv, "88 - 108 MHz", "select88108mhz", "selectFm_radio");
 
@@ -860,7 +862,17 @@ modClasses = [
         }
 
         apply(firmwareData) {
-            if (this.select6476mhz.checked) {
+            if (this.select76108mhz.checked) {
+                firmwareData = replaceSection(firmwareData, hexString("5f0a0000"), 0xa274);
+                firmwareData = replaceSection(firmwareData, hexString("5f20c000"), 0xa2f4);
+                firmwareData = replaceSection(firmwareData, hexString("5f20c000"), 0x6452);
+                firmwareData = replaceSection(firmwareData, hexString("8721"), 0x6456);
+            }
+            else if (this.select64108mhz.checked) {
+                firmwareData = replaceSection(firmwareData, hexString("5f0a0000"), 0xa274);
+                firmwareData = replaceSection(firmwareData, hexString("5020c000"), 0x6452);
+            }
+            else if (this.select6476mhz.checked) {
                 const Reg05 = hexString("df0a0000");
                 const MOVSR0 = hexString("5020c000");
                 const MOVSR1 = hexString("5f21");
