@@ -13,6 +13,8 @@ if (navbarContainer) {
             navLinks.forEach(link => {
                 if (link.pathname === window.location.pathname) {
                     link.parentElement.classList.add("active");
+                } else if (link.pathname === "/index.html" && window.location.pathname === "/") {
+                    link.parentElement.classList.add("active");
                 }
             })
         })
