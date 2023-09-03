@@ -31,7 +31,7 @@
 
     .bg-animated {
       min-height: 100%;
-      background: linear-gradient(-45deg, #555555, #494949, #5e73b3, #4e73df);
+      background: linear-gradient(-45deg, #555555, #494949, #598647, #5cbb58);
       background-size: 400% 400%;
       background-attachment: fixed;
       animation: gradient 5s ease;
@@ -150,83 +150,15 @@
                   <h6 class="m-0 font-weight-bold text-primary">Instructions</h6>
                 </a>
                 <div id="instructions" class="card-body collapse">
-                  <h2 class="mb-4">UVMOD Patcher & Flasher</h2>
-                  <p>This tool lets you customize the original firmware for the Quansheng UV-K5, UV-K6, UV-K5(8), and UV-5R
-                    Plus handheld radios. To flash the firmware, you need a compatible programming cable and the
-                    necessary drivers.</p>
+                  <h2 class="mb-4">UVMOD Configurator</h2>
+                  <p>This tool lets you edit the settings and channels of your radio from the comfort of your web
+                    browser. It serves as a platform independent replacement for the official CPS software. </p>
 
                   <h3 class="mt-4">Usage</h3>
-                  <ol>
-                    <li>Select the desired mods and customize as needed. Refer to the description of each mod for usage
-                      instructions.</li>
-                    <li>On the right side, you can select your radio model, but you can also leave it on "Patch for all
-                      radios", which creates a universal firmware that bypasses the version check. </li>
-                    <li>Click "Patch" and watch the console output, it will show errors and also the final size. If you
-                      get an oversize warning, you will have to deselect mods that add extra memory and try again.</li>
-                    <li>Click "Save" to download the finished firmware file.</li>
-                  </ol>
+                  <p>The configurator is currently under development. Right now it can only read the configuration of
+                    the radio and save it as a backup. The backup *should* be compatible with k5prog but as of now it is
+                    untested, so please avoid writing this backup to any radio just yet. </p>
 
-                  <h3 class="mt-4">Flashing directly with UVMOD</h3>
-                  <p>Modern Chromium-based browsers such as Chrome, Edge, and Opera have a built-in API
-                    that allows UVMOD to flash the firmware directly to the radio. This is the easiest way to flash the
-                    firmware, but it only works on Windows and Linux.</p>
-                  <p>On Windows, you need the driver for the
-                    programming cable. Typically these cables use ch340, ch341 or cp210x chips. On linux, the driver is
-                    usually included. </p>
-                  <ol>
-                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. It
-                      should show up as a com port.</li>
-                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and
-                      turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the
-                      radio stays dark. Your radio is now in bootloader mode.</li>
-                    <li>Connect the programming cable to the radio.</li>
-                    <li>Click "Flash directly" and wait for the process to finish. You can watch progress in the
-                      console. </li>
-                    <li>All done, all your settings should still all be intact.</li>
-                  </ol>
-
-                  <h3 class="mt-4">Flashing with the official software</h3>
-                  <p>If you use Windows, you can use the official updater tool. You can download it directly from UVMOD
-                    using the link in the console window.</p>
-                  <ol>
-                    <li>Connect the programming cable to your computer and ensure the proper drivers are installed. In
-                      the device manager, it should show up as a com port.</li>
-                    <li>Start the updater tool, select the com port, and click connect.</li>
-                    <li>Load the customized firmware as the program file.</li>
-                    <li>On your radio (still disconnected and turned off), hold down PTT (large button on the side) and
-                      turn on the radio while still holding PTT. Now the flashlight should turn on while the rest of the
-                      radio stays dark. Your radio is now in bootloader mode.</li>
-                    <li>Connect the programming cable to the radio. The "Update" button in the updater tool should now
-                      become available.</li>
-                    <li>Click update and wait for the tool to finish.</li>
-                    <li>All done, all your settings should still all be intact.</li>
-                  </ol>
-                  <h3 class="mt-4">Hidden Mods</h3>
-                  <p>There are some mods that are not listed in the mod list for safety reasons, which can be enabled
-                    here. Please consider the following warnings:</p>
-                  <ul>
-                    <li><b>ONLY USE TX MODS IF YOU UNDERSTAND THE CONCEPT OF HARMONICS, AND HAVE THE EQUIPMENT TO
-                        APPROPRIATELY FILTER THEM!</b></li>
-                    <li><b>DO NOT - UNDER ANY CIRCUMSTANCES - TRANSMIT ON THE AIR BAND OR INTEFERE WITH OTHER CRITICAL
-                        INFRASTRUCTURE!</b></li>
-                    <li>Transmitting on illegal frequencies can result in heavy fines or even jail time.</li>
-                    <li>The radio hardware is only designed for VHF and UHF, poorly so. Enabling TX on other frequencies
-                      does not change that fact.
-                      On frequencies outside of the VHF and UHF bands, the radio will have a very low output power and a
-                      very high SWR, which can damage the radio.
-                      Even worse, the radio will output a LOT of harmonics, on the outer parts of the spectrum, the
-                      harmonics even get stronger than the carrier signal.
-                      <b>For example, transmitting on CB bands will transmit useless amounts of power on CB
-                        (microwatts), while emitting significant amounts of power on several other frequencies, many of
-                        which are illegal to transmit on.</b>
-                    </li>
-                    </li>
-                    <li>You take full responsibility for your actions!</li>
-                  </ul>
-                  <p>If you agree to these warning and terms, you may now show the hidden mods by <a
-                      onclick="showHiddenMods()" class="card-link" style="cursor: pointer;"><b>clicking here.</b></a>
-                  </p>
-                  <p>The mods will show up on the mod list with a red border and title.</p>
                 </div>
 
               </div>
@@ -241,12 +173,10 @@
               <div class="card shadow-lg mb-4">
                 <div class="card-header py-3 d-flex">
                   <div class="mr-auto">
-                    <h6 class="m-0 font-weight-bold text-primary">Mods</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
                   </div>
-                  <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="https://github.com/whosmatt/uvmod">Contribute mods &rarr;</a>
                 </div>
-                <div id="modsContainer" class="card-body">
+                <div id="configContainer" class="card-body">
                 </div>
               </div>
             </div>
@@ -258,8 +188,6 @@
                   <div class="mr-auto">
                     <h6 class="m-0 font-weight-bold text-primary">Console</h6>
                   </div>
-                  <a style="line-height: 1 !important;" target="_blank" rel="nofollow"
-                    href="fw/uvk5updater.zip">Download updater software &rarr;</a>
                 </div>
                 <div class="card-body">
                   <div>
@@ -269,45 +197,32 @@
                   </div>
                   <div>
                     <div class="input-group mt-4">
-                      <div id="useDefaultFirmwareDiv" class="input-group-prepend" style="cursor:pointer">
+                      <div class="input-group-prepend">
                         <div class="input-group-text">
-                          <input id="useDefaultFirmware" type="checkbox" checked style="cursor: pointer;">
+                          <input id="automaticBackupCheckbox" style="cursor: pointer;" type="checkbox" checked>
                         </div>
                       </div>
-                      <div id="customFileInputDiv" class="custom-file d-none">
-                        <input id="customFileInput" type="file" class="custom-file-input">
-                        <label id="customFileLabel" class="custom-file-label" for="customFileInput">Select own firmware
-                          (v26 only)</label>
-                      </div>
-                      <span id="useDefaultFirmwareSpan" class="form-control" readonly>Using stock v26 firmware</span>
+                      <label for="automaticBackupCheckbox" class="form-control" readonly style="cursor: pointer;">Save
+                        automatic backup</label>
                     </div>
-                    <select class="form-control mt-2" id="firmwareVersionSelect">
-                      <option value="*">Patch for all radios</option>
-                      <option value="2">Patch for K5, K6, K5(8)</option>
-                      <option value="4">Patch for 5R Plus</option>
-                    </select>
+                  </div>
+                  <div class="custom-file mt-2">
+                    <input id="backupFileInput" type="file" class="custom-file-input" accept=".bin">
+                    <label id="backupFileLabel" class="custom-file-label" for="backupFileInput">Import backup</label>
                   </div>
 
-                  <div class="mt-2">
-                    <a id="patchButton" class="btn btn-primary btn-icon-split w-100">
-                      <span class="icon text-white-50">
-                        <i class="fas fa-wrench"></i>
-                      </span>
-                      <span class="text w-100">Patch firmware</span>
-                    </a>
-                  </div>
                   <div class="mt-2 d-flex">
-                    <a id="downloadButton" class="btn btn-dark btn-icon-split mr-1 disabled w-100">
+                    <a id="readConfigButton" class="btn btn-dark btn-icon-split mr-1 w-100">
                       <span class="icon text-white-50">
-                        <i class="fas fa-download"></i>
+                        <i class="fas fa-sign-out-alt"></i>
                       </span>
-                      <span class="text w-100">Save firmware</span>
+                      <span class="text w-100">Read Config</span>
                     </a>
-                    <a id="flashButton" class="btn btn-dark btn-icon-split disabled w-100">
+                    <a id="writeConfigButton" class="btn btn-dark btn-icon-split disabled w-100">
                       <span class="icon text-white-50">
-                        <i class="fab fa-usb"></i>
+                        <i class="fas fa-sign-in-alt"></i>
                       </span>
-                      <span class="text w-100">Flash directly</span>
+                      <span class="text w-100">Write Config</span>
                     </a>
                   </div>
                 </div>
@@ -343,7 +258,7 @@
   <script src="js/qsSerial.js"></script>
   <script src="js/modframework.js"></script>
   <script src="mods.js"></script>
-  <script src="js/tool_patcher.js"></script>
+  <script src="js/tool_configurator.js"></script>
 
   <!-- Easter egg, click the title -->
   <script>
