@@ -413,7 +413,7 @@ modClasses = [
             }
             const dataView = new DataView(shellcode.buffer);
             const lowFreq = Math.floor(this.lowFreq.value / 10);
-            const highFreq = Math.floor(this.highFreq.value / 10);
+            const highFreq = Math.floor(this.highFreq.value / 10) + 1; // highFreq check is >=, so we need to subtract 1 to include the last frequency
             dataView.setUint32(32, lowFreq, true);
             dataView.setUint32(36, highFreq, true);
 
@@ -789,7 +789,7 @@ modClasses = [
         }
     }
     ,
-    /*
+    /* THIS MOD DOES NOT WORK - ISSUE TRACKED HERE: https://github.com/amnemonic/Quansheng_UV-K5_Firmware/issues/85
     class Mod_ChangeToneBurst extends FirmwareMod {
         constructor() {
             super("1750Hz Tone Frequency", "The 1750Hz button sends a 1750Hz activation tone by default. To open NOAA channels (in combination with the NOAA frequencies mod on the receiving unit), you can use this mod to send a 1050Hz tone. Common repeater tone pulse frequencies are 1000Hz, 1450Hz, 1750Hz, 2100Hz", 0);
