@@ -176,12 +176,13 @@
                     <h6 class="m-0 font-weight-bold text-primary">Configuration</h6>
                   </div>
                 </div>
-                <div id="configContainer" class="card-body">
+                <div id="modsContainer" class="card-body">
+                  <p class="text-center mb-0">Please read config or load a backup.</p>
                 </div>
               </div>
             </div>
 
-            <div class="col-lg-4 mb-4">
+            <div class="col-lg-5 mb-4">
               <!-- Console -->
               <div class="card shadow mb-4 sticky-top" style="top: 1.5rem">
                 <div class="card-header py-3 d-flex">
@@ -207,8 +208,8 @@
                     </div>
                   </div>
                   <div class="custom-file mt-2">
-                    <input id="backupFileInput" type="file" class="custom-file-input" accept=".bin">
-                    <label id="backupFileLabel" class="custom-file-label" for="backupFileInput">Import backup</label>
+                    <input id="backupFileInput" type="file" class="custom-file-input" accept=".bin" style="cursor: pointer;">
+                    <label id="backupFileLabel" class="custom-file-label" for="backupFileInput" data-default-text="Import backup file">Import backup file</label>
                   </div>
 
                   <div class="mt-2 d-flex">
@@ -253,12 +254,24 @@
 
   <!-- Core plugin JavaScript-->
 
-  <!-- Patcher JavaScript -->
+  <!-- Configurator JavaScript -->
   <script src="js/fwpack.js"></script>
   <script src="js/qsSerial.js"></script>
   <script src="js/modframework.js"></script>
-  <script src="mods.js"></script>
+  <script src="js/configurators.js"></script>
   <script src="js/tool_configurator.js"></script>
+
+  <!-- Translation JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/i18next@23.5.1/i18next.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@7.1.0/i18nextBrowserLanguageDetector.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@2.2.2/i18nextHttpBackend.min.js"></script>
+  <script src="js/i18n.js"></script>
+  <script>
+    i18next.on("initialized", function (options) {
+      //init();
+    });
+  </script>
 
   <!-- Easter egg, click the title -->
   <script>

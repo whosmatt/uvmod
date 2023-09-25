@@ -38,44 +38,69 @@ function firmware_xor(fwcontent) {
     return fwcontent;
 }
 
+let firmware = {
+    rawFirmware: null,
+    rawFirmwareBackup: null,
+    rawVersion: null,
+    versionString: null,
+    symbolTable: null,
 
-function unpack(encoded_firmware) {
+    unpack: function (packedFirmware) {
+        if (crc16_ccitt_le(packedFirmware.slice(0, -2)).toString() !== packedFirmware.slice(-2).toString()) {
+            this.clear();
+            throw new Error('Invalid firmware CRC');
+        }
+    
+        const decoded_firmware = firmware_xor(packedFirmware.slice(0, -2));
+        const versionInfoOffset = 0x2000;
+        const versionInfoLength = 16;
+        const resultLength = decoded_firmware.length - versionInfoLength;
+        const result = new Uint8Array(resultLength);
+    
+        result.set(decoded_firmware.subarray(0, versionInfoOffset));
+        result.set(decoded_firmware.subarray(versionInfoOffset + versionInfoLength), versionInfoOffset);
+        
+        this.rawFirmware = result;
+        this.rawFirmwareBackup = result;
+        this.rawVersion = decoded_firmware.subarray(versionInfoOffset, versionInfoOffset + versionInfoLength);
+        this.versionString = new TextDecoder().decode(this.rawVersion.subarray(0, this.rawVersion.indexOf(0)));
+    },
 
-    if (crc16_ccitt_le(encoded_firmware.slice(0, -2)).toString() === encoded_firmware.slice(-2).toString()) {
-        log("CRC check passed...");
-    } else {
-        log("WARNING: CRC CHECK FAILED! FIRMWARE NOT VALID!\nMake sure to choose a flashable bin file. ");
-    }
+    pack: function () {
+        const versionInfoOffset = 0x2000;
+        const versionInfoLength = 16;
+    
+        const result = new Uint8Array(versionInfoLength + this.rawFirmware.length);
+        result.set(this.rawFirmware.subarray(0, versionInfoOffset));
+        result.set(this.rawVersion, versionInfoOffset);
+        result.set(this.rawFirmware.subarray(versionInfoOffset), versionInfoOffset + versionInfoLength);
+    
+        const firmware_with_version_encoded = firmware_xor(result);
+        const crc = crc16_ccitt_le(firmware_with_version_encoded);
+    
+        const packedFirmware = new Uint8Array(firmware_with_version_encoded.length + crc.length);
+        packedFirmware.set(firmware_with_version_encoded, 0);
+        packedFirmware.set(crc, firmware_with_version_encoded.length);
+    
+        return packedFirmware;
+    },
 
-    const decoded_firmware = firmware_xor(encoded_firmware.slice(0, -2));
-    const versionInfoOffset = 0x2000;
-    const versionInfoLength = 16;
-    const resultLength = decoded_firmware.length - versionInfoLength;
-    const result = new Uint8Array(resultLength);
+    clear: function () {
+        this.rawFirmware = null;
+        this.rawVersion = null;
+        this.versionString = null;
+        this.symbolTable = null;
+    },
 
-    result.set(decoded_firmware.subarray(0, versionInfoOffset));
-    result.set(decoded_firmware.subarray(versionInfoOffset + versionInfoLength), versionInfoOffset);
-
-    rawVersion = decoded_firmware.subarray(versionInfoOffset, versionInfoOffset + versionInfoLength);
-
-    return result;
-}
-
-function pack(decoded_firmware) {
-    const versionInfoOffset = 0x2000;
-    const versionInfoLength = 16;
-
-    const result = new Uint8Array(versionInfoLength + decoded_firmware.length);
-    result.set(decoded_firmware.subarray(0, versionInfoOffset));
-    result.set(rawVersion, versionInfoOffset);
-    result.set(decoded_firmware.subarray(versionInfoOffset), versionInfoOffset + versionInfoLength);
-
-    const firmware_with_version_encoded = firmware_xor(result);
-    const crc = crc16_ccitt_le(firmware_with_version_encoded);
-
-    const packed_firmware = new Uint8Array(firmware_with_version_encoded.length + crc.length);
-    packed_firmware.set(firmware_with_version_encoded, 0);
-    packed_firmware.set(crc, firmware_with_version_encoded.length);
-
-    return packed_firmware;
+    // shorthand aliases
+    r: function (offset, newData) {
+        replaceSection(this.rawFirmware, newData, offset);
+    },
+    c: function (offset, section) {
+        return compareSection(this.rawFirmware, section, offset);
+    },
+    dump: function (offset, length) {
+        const section = this.rawFirmware.slice(offset, offset + length);
+        console.log(`Firmware dump at offset ${offset}`, uint8ArrayToHexString(section), section);
+    },
 }

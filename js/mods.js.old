@@ -1,4 +1,40 @@
-modClasses = [
+class FirmwareMod {
+    constructor(name, description, size) {
+        this.name = name;
+        this.description = description;
+        this.size = size; // Additional flash usage in bytes
+        this.enabled = false; // Checkbox status, initially disabled
+        this.hidden = false; // If true, the mod will be hidden until activated in the instructions panel. Use this for risky mods. 
+        this.modSpecificDiv = document.createElement("div"); // Div for mod-specific inputs
+        // If needed, create input fields here and append them to the modSpecificDiv
+    }
+
+    apply(firmwareData) {
+        // This method should be overridden in each mod implementation
+        // It should apply the mod on the firmwareData and return the modified firmwareData
+
+        // put your offsets and other version specific stuff here
+        let offset;
+        switch (firmwareVersion) {
+            case "2.01.26":
+                offset = 0xDEAD;
+                break;
+            case "2.01.27":
+                offset = 0xBEEF;
+                break;
+            default:
+                throw new Error("Unsupported firmware version.");
+        }
+        // this line is very important, it allows UVMOD to automatically gray out mods that are not compatible with the current firmware version
+        if (firmwareData === null) return;
+
+        // edit firmwareData here
+
+        return firmwareData;
+    }
+}
+
+const modClasses = [
     class Mod_APP extends FirmwareMod {
         constructor() {
             super("Apps", "Adds an application to the firmware. Some apps are started with the flashlight button. Due to very limited space available, you can only select one app:", "up to 2770");
@@ -60,23 +96,32 @@ modClasses = [
 
             return firmwareData;
         }
-    }
-    ,
+    },
     class Mod_BatteryIcon extends FirmwareMod {
         constructor() {
             super("Battery icon", "Changes the battery icon to a more normal looking variant.", 0);
         }
 
         apply(firmwareData) {
-            const offset = 0xD348 + 134;
+            let offset;
+            switch (firmwareVersion) {
+                case "2.01.26":
+                    offset = 0xD348 + 134;
+                    break;
+                case "2.01.27":
+                    offset = 0xD370 + 134;
+                    break;
+                default:
+                    throw new Error("Unsupported firmware version.");
+            }
+
             const oldData = hexString("3e227f4141414141414141414141414163003e227f415d5d4141414141414141414163003e227f415d5d415d5d4141414141414163003e227f415d5d415d5d415d5d4141414163003e227f415d5d415d5d415d5d415d5d4163");
             const newData = hexString("3e2263414141414141414141414141417f003e2263414141414141414141415d5d4163003e2263414141414141415d5d415d5d417f003e2263414141415d5d415d5d415d5d417f003e2263415d5d415d5d415d5d415d5d417f");
             if (compareSection(firmwareData, oldData, offset)) {
                 firmwareData = replaceSection(firmwareData, newData, offset);
-                log(`Success: ${this.name} applied.`);
             }
             else {
-                log(`ERROR in ${this.name}: Unexpected data, already patched or wrong firmware?`);
+                throw new Error("Unexpected data, already patched or wrong firmware?");
             }
 
             return firmwareData;
@@ -373,22 +418,6 @@ modClasses = [
         }
     }
     ,
-    class Mod_EnableTXEverywhereButAirBand extends FirmwareMod {
-        constructor() {
-            super("Enable TX everywhere except Air Band", "DANGER! Allows transmitting on all frequencies except air band (118 - 137 MHz). Only use this mod for testing, do not transmit on illegal frequencies!", 0);
-            this.hidden = true;
-        }
-
-        apply(firmwareData) {
-            const offset = 0x1804;
-            const newData = hexString("f0b5014649690968054a914205d3054a914202d20020c04301e00020ffe7f0bdc00db400a00bd100");
-            firmwareData = replaceSection(firmwareData, newData, offset);
-            log(`Success: ${this.name} applied.`);
-
-            return firmwareData;
-        }
-    }
-    ,
     class Mod_CustomTXRange extends FirmwareMod {
         constructor() {
             super("Custom TX Range", "DANGER: This mod replaces the TX Disabled check with a simple function that either blocks a range of frequencies and allows all else, or vice versa. It can be used to do the same as 'Enable TX everywhere except Air Band', or it could also be used to make the radio only TX on PMR466. The preset values below are set to block Air Band and allow everything else.", 0);
@@ -399,8 +428,8 @@ modClasses = [
             this.selectBlock.checked = true;
             this.selectAllow.parentElement.classList.add("mb-3");
 
-            this.lowFreq = addInputField(this.modSpecificDiv, "Lower Limit (Hz)", "118000000");
-            this.highFreq = addInputField(this.modSpecificDiv, "Upper Limit (Hz)", "137000000");
+            this.lowFreq = addInputField(this.modSpecificDiv, ["Lower Limit", "Hz"], "108000000");
+            this.highFreq = addInputField(this.modSpecificDiv, ["Upper Limit", "Hz"], "137000000");
         }
 
         apply(firmwareData) {
@@ -462,7 +491,7 @@ modClasses = [
     ,
     class Mod_MenuStrings extends FirmwareMod {
         constructor() {
-            super("Menu strings", "Changes text in the settings menu. The displayed JSON contains every string with offset, description and size. Only edit the string and dont use more characters than allowed by the size.", 0);
+            super("Menu strings", "Changes text in the settings menu to something a bit more intuitive. The displayed JSON contains every string with offset, description and size. Only edit the string and dont use more characters than allowed by the size.", 0);
 
             // the  b l o c k
             const strings = [{ "offset": 56470, "description": "squelch", "size": 6, "string": "SQLCH" }, { "offset": 56477, "description": "step", "size": 6, "string": "STEP" }, { "offset": 56484, "description": "txpower", "size": 6, "string": "TXPWR" }, { "offset": 56491, "description": "r dcs", "size": 6, "string": "R_DCS" },
@@ -552,8 +581,8 @@ modClasses = [
     class Mod_RogerBeep extends FirmwareMod {
         constructor() {
             super("Roger Beep", "Changes the pitch of the two roger beep tones. Tone 1 plays for 150ms and tone 2 for 80ms. The defaults in this mod are similar to the Mototrbo beep. The maximum is 6347 Hz. ", 0);
-            this.inputTone1 = addInputField(this.modSpecificDiv, "Tone 1 frequency (Hz)", "1540");
-            this.inputTone2 = addInputField(this.modSpecificDiv, "Tone 2 frequency (Hz)", "1310");
+            this.inputTone1 = addInputField(this.modSpecificDiv, ["Tone 1 frequency", "Hz"], "1540");
+            this.inputTone2 = addInputField(this.modSpecificDiv, ["Tone 2 frequency", "Hz"], "1310");
         }
 
         apply(firmwareData) {
@@ -626,20 +655,20 @@ modClasses = [
             explanation.innerText = "You can customize the frequency ranges here. Make sure they are in the correct order and don't overlap. The maximum range is 18 MHz to 1300 MHz, and there is a gap from 630 - 840 MHz, where the chip cannot receive or transmit due to a hardware limitation.";
             customModeDiv.appendChild(explanation);
 
-            this.band1L = addInputField(customModeDiv, "Band 1 Lower Limit (Hz)", "50000000");
-            this.band1U = addInputField(customModeDiv, "Band 1 Upper Limit (Hz)", "76000000");
-            this.band2L = addInputField(customModeDiv, "Band 2 Lower Limit (Hz)", "108000000");
-            this.band2U = addInputField(customModeDiv, "Band 2 Upper Limit (Hz)", "135999900");
-            this.band3L = addInputField(customModeDiv, "Band 3 Lower Limit (Hz)", "136000000");
-            this.band3U = addInputField(customModeDiv, "Band 3 Upper Limit (Hz)", "173999900");
-            this.band4L = addInputField(customModeDiv, "Band 4 Lower Limit (Hz)", "174000000");
-            this.band4U = addInputField(customModeDiv, "Band 4 Upper Limit (Hz)", "349999900");
-            this.band5L = addInputField(customModeDiv, "Band 5 Lower Limit (Hz)", "350000000");
-            this.band5U = addInputField(customModeDiv, "Band 5 Upper Limit (Hz)", "399999900");
-            this.band6L = addInputField(customModeDiv, "Band 6 Lower Limit (Hz)", "400000000");
-            this.band6U = addInputField(customModeDiv, "Band 6 Upper Limit (Hz)", "469999900");
-            this.band7L = addInputField(customModeDiv, "Band 7 Lower Limit (Hz)", "470000000");
-            this.band7U = addInputField(customModeDiv, "Band 7 Upper Limit (Hz)", "600000000");
+            this.band1L = addInputField(customModeDiv, ["Band 1 Lower Limit", "Hz"], "50000000");
+            this.band1U = addInputField(customModeDiv, ["Band 1 Upper Limit", "Hz"], "76000000");
+            this.band2L = addInputField(customModeDiv, ["Band 2 Lower Limit", "Hz"], "108000000");
+            this.band2U = addInputField(customModeDiv, ["Band 2 Upper Limit", "Hz"], "135999900");
+            this.band3L = addInputField(customModeDiv, ["Band 3 Lower Limit", "Hz"], "136000000");
+            this.band3U = addInputField(customModeDiv, ["Band 3 Upper Limit", "Hz"], "173999900");
+            this.band4L = addInputField(customModeDiv, ["Band 4 Lower Limit", "Hz"], "174000000");
+            this.band4U = addInputField(customModeDiv, ["Band 4 Upper Limit", "Hz"], "349999900");
+            this.band5L = addInputField(customModeDiv, ["Band 5 Lower Limit", "Hz"], "350000000");
+            this.band5U = addInputField(customModeDiv, ["Band 5 Upper Limit", "Hz"], "399999900");
+            this.band6L = addInputField(customModeDiv, ["Band 6 Lower Limit", "Hz"], "400000000");
+            this.band6U = addInputField(customModeDiv, ["Band 6 Upper Limit", "Hz"], "469999900");
+            this.band7L = addInputField(customModeDiv, ["Band 7 Lower Limit", "Hz"], "470000000");
+            this.band7U = addInputField(customModeDiv, ["Band 7 Upper Limit", "Hz"], "600000000");
 
             this.modSpecificDiv.appendChild(customModeDiv);
 
@@ -696,13 +725,17 @@ modClasses = [
     class Mod_FrequencySteps extends FirmwareMod {
         constructor() {
             super("Frequency Steps", "Changes the frequency steps.", 0);
-            this.inputStep1 = addInputField(this.modSpecificDiv, "Frequency Step 1 (Hz)", "2500");
-            this.inputStep2 = addInputField(this.modSpecificDiv, "Frequency Step 2 (Hz)", "5000");
-            this.inputStep3 = addInputField(this.modSpecificDiv, "Frequency Step 3 (Hz)", "6250");
-            this.inputStep4 = addInputField(this.modSpecificDiv, "Frequency Step 4 (Hz)", "10000");
-            this.inputStep5 = addInputField(this.modSpecificDiv, "Frequency Step 5 (Hz)", "12500");
-            this.inputStep6 = addInputField(this.modSpecificDiv, "Frequency Step 6 (Hz)", "25000");
-            this.inputStep7 = addInputField(this.modSpecificDiv, "Frequency Step 7 (Hz) (only available on band 2)", "8330");
+            this.inputStep1 = addInputField(this.modSpecificDiv, ["Step 1", "Hz"], "2500");
+            this.inputStep2 = addInputField(this.modSpecificDiv, ["Step 2", "Hz"], "5000");
+            this.inputStep3 = addInputField(this.modSpecificDiv, ["Step 3", "Hz"], "6250");
+            this.inputStep4 = addInputField(this.modSpecificDiv, ["Step 4", "Hz"], "10000");
+            this.inputStep5 = addInputField(this.modSpecificDiv, ["Step 5", "Hz"], "12500");
+            this.inputStep6 = addInputField(this.modSpecificDiv, ["Step 6", "Hz"], "25000");
+            this.inputStep7 = addInputField(this.modSpecificDiv, ["Step 7", "Hz"], "8330");
+            const inputStep7Help = document.createElement("small");
+            inputStep7Help.classList.add("form-text", "text-muted");
+            inputStep7Help.innerText = "Step 7 is only available on Band 2";
+            this.modSpecificDiv.appendChild(inputStep7Help);
         }
 
         apply(firmwareData) {
@@ -741,16 +774,16 @@ modClasses = [
     class Mod_NOAAFrequencies extends FirmwareMod {
         constructor() {
             super("NOAA Frequencies", "The NOAA scan feature is unique because it can scan in the background, all the time. However, most people dont need the weather alerts or dont have NOAA in their country. This mod lets you change the frequencies so you can use the NOAA scan function for something else, but keep in mind that the radio needs the 1050hz tone burst to open squelch. The values below are pre-set to the first 10 PMR446 channels. ", 0);
-            this.inputFreq1 = addInputField(this.modSpecificDiv, "Frequency 1 (Hz)", "446006250");
-            this.inputFreq2 = addInputField(this.modSpecificDiv, "Frequency 2 (Hz)", "446018750");
-            this.inputFreq3 = addInputField(this.modSpecificDiv, "Frequency 3 (Hz)", "446031250");
-            this.inputFreq4 = addInputField(this.modSpecificDiv, "Frequency 4 (Hz)", "446043750");
-            this.inputFreq5 = addInputField(this.modSpecificDiv, "Frequency 5 (Hz)", "446056250");
-            this.inputFreq6 = addInputField(this.modSpecificDiv, "Frequency 6 (Hz)", "446068750");
-            this.inputFreq7 = addInputField(this.modSpecificDiv, "Frequency 7 (Hz)", "446081250");
-            this.inputFreq8 = addInputField(this.modSpecificDiv, "Frequency 8 (Hz)", "446093750");
-            this.inputFreq9 = addInputField(this.modSpecificDiv, "Frequency 9 (Hz)", "446106250");
-            this.inputFreq10 = addInputField(this.modSpecificDiv, "Frequency 10 (Hz)", "446118750");
+            this.inputFreq1 = addInputField(this.modSpecificDiv, ["Frequency 1", "Hz"], "446006250");
+            this.inputFreq2 = addInputField(this.modSpecificDiv, ["Frequency 2", "Hz"], "446018750");
+            this.inputFreq3 = addInputField(this.modSpecificDiv, ["Frequency 3", "Hz"], "446031250");
+            this.inputFreq4 = addInputField(this.modSpecificDiv, ["Frequency 4", "Hz"], "446043750");
+            this.inputFreq5 = addInputField(this.modSpecificDiv, ["Frequency 5", "Hz"], "446056250");
+            this.inputFreq6 = addInputField(this.modSpecificDiv, ["Frequency 6", "Hz"], "446068750");
+            this.inputFreq7 = addInputField(this.modSpecificDiv, ["Frequency 7", "Hz"], "446081250");
+            this.inputFreq8 = addInputField(this.modSpecificDiv, ["Frequency 8", "Hz"], "446093750");
+            this.inputFreq9 = addInputField(this.modSpecificDiv, ["Frequency 9", "Hz"], "446106250");
+            this.inputFreq10 = addInputField(this.modSpecificDiv, ["Frequency 10", "Hz"], "446118750");
         }
 
         apply(firmwareData) {
@@ -903,7 +936,7 @@ modClasses = [
     class Mod_AirCopy extends FirmwareMod {
         constructor() {
             super("AIR COPY Frequency", "Changes the frequency used by AIR COPY. The default value is 410.025 MHz. ", 0);
-            this.inputFreq1 = addInputField(this.modSpecificDiv, "Air Copy Frequency (Hz)", "410025000");
+            this.inputFreq1 = addInputField(this.modSpecificDiv, ["Air Copy Frequency", "Hz"], "410025000");
 
         }
 

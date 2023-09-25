@@ -12,10 +12,7 @@
 
     @media (max-width: 767px) {
         .sidebar-brand {
-            font-size: 2.5rem!important;
-            font-weight: 200!important;
-            padding: 0.5rem 0!important;
-            margin-right:auto!important;
+            display: none!important;
         }
         .sidebar-divider {
             display: none!important;
@@ -36,6 +33,10 @@
             min-height: auto;
             background-image: none;
         }
+        .sidebar .nav-item .collapse {
+            left: -1.5rem;
+            top: 5rem;
+        }
 
     }
 
@@ -53,41 +54,79 @@
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
-        Original Firmware
+    <div class="sidebar-heading" data-i18n="navbar.heading-original-firmware">
     </div>
 
     <!-- Nav Item - Patcher -->
     <li class="nav-item">
         <a class="nav-link" href="index.html">
             <i class="fas fa-fw fa-wrench"></i>
-            <span>Patcher/Flasher</span></a>
+            <span data-i18n="navbar.item-patcher-flasher"></span></a>
     </li>
 
     <!-- Nav Item - CPS -->
     <li class="nav-item">
         <a class="nav-link" href="configurator.html">
             <i class="fas fa-fw fa-cog"></i>
-            <span>Configurator (WIP)</span></a>
+            <span data-i18n="navbar.item-configurator"></span></a>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider">
 
     <!-- Heading -->
-    <div class="sidebar-heading">
-        Open Source
+    <div class="sidebar-heading" data-i18n="navbar.heading-open-firmware">
     </div>
 
     <!-- Nav Item - cfw Flasher -->
     <li class="nav-item">
         <a class="nav-link disabled" href="osfw.html">
             <i class="fas fa-cloud-download-alt"></i>
-            <span>Flasher (WIP)</span></a>
+            <span data-i18n="navbar.item-flasher"></span></a>
     </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Heading -->
+    <div class="sidebar-heading" data-i18n="navbar.heading-resources"></div>
+
+    <!-- Nav Item - GitHub -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseGitHub" style="cursor: pointer;">
+            <i class="fab fa-github"></i>
+            <span data-i18n="navbar.item-folder-github"></span>
+        </a>
+        <div id="collapseGitHub" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header" data-i18n="navbar.heading-github-links"></h6>
+                <a class="collapse-item" href="https://github.com/whosmatt/uvmod" target="_blank" data-i18n="navbar.item-github-uvmod"></a>
+                <a class="collapse-item" href="https://github.com/amnemonic/Quansheng_UV-K5_Firmware#links" target="_blank" data-i18n="navbar.item-github-links"></a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Nav Item - Telegram -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" data-toggle="collapse" data-target="#collapseTelegram" style="cursor: pointer;">
+            <i class="fab fa-telegram"></i>
+            <span data-i18n="navbar.item-folder-telegram"></span>
+        </a>
+        <div id="collapseTelegram" class="collapse" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header" data-i18n="navbar.heading-telegram-channels"></h6>
+                <a class="collapse-item" href="https://t.me/quansheng_uvk5_en" target="_blank" data-i18n="navbar.item-telegram-en"></a>
+                <a class="collapse-item" href="https://t.me/uv_k5" target="_blank" data-i18n="navbar.item-telegram-ru"></a>
+                <a class="collapse-item" href="https://t.me/quanshenguv5kde" target="_blank" data-i18n="navbar.item-telegram-de"></a>
+                <a class="collapse-item" href="https://t.me/radioamators/38782" target="_blank" data-i18n="navbar.item-telegram-ua"></a>
+                <a class="collapse-item" href="https://t.me/uvk5_pl" target="_blank" data-i18n="navbar.item-telegram-pl"></a>
+                <a class="collapse-item" href="https://t.me/+W31XPFpurWk0NzM0" target="_blank" data-i18n="navbar.item-telegram-it"></a>
+                <a class="collapse-item" href="https://t.me/quansheng_uvk5_tr" target="_blank" data-i18n="navbar.item-telegram-tr"></a>
+                <a class="collapse-item" href="https://t.me/QuanShengES" target="_blank" data-i18n="navbar.item-telegram-es"></a>
+            </div>
+        </div>
+    </li>
+
 
 </ul>
 </nav>

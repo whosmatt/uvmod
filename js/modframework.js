@@ -1,25 +1,8 @@
-class FirmwareMod {
-  constructor(name, description, size) {
-    this.name = name;
-    this.description = description;
-    this.size = size; // Additional flash usage in bytes
-    this.enabled = false; // Checkbox status, initially disabled
-    this.hidden = false; // If true, the mod will be hidden until activated in the instructions panel. Use this for risky mods. 
-    this.modSpecificDiv = document.createElement("div"); // Div for mod-specific inputs
-    // If needed, create input fields here and append them to the modSpecificDiv
-  }
-
-  apply(firmwareData) {
-    // This method should be overridden in each mod implementation
-    // It should apply the mod on the firmwareData and return the modified firmwareData
-    return firmwareData;
-  }
-}
-
 function addModToUI(mod, modDiv) {
   // Create a card div
   const card = document.createElement("div");
   card.classList.add("card", "mb-3", "border-left-primary", "border-left-secondary");
+  card.style.transition = "background-color 0.5s ease";
   if (mod.hidden) {
     card.classList.add("hiddenMod", "d-none", "border-danger", "border-left-danger");
   }
@@ -36,22 +19,29 @@ function addModToUI(mod, modDiv) {
   const checkboxCol = document.createElement("div");
   checkboxCol.classList.add("col-auto");
 
-  // Create checkbox for enabling the mod
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.style.height = "1.45rem"; 
-  checkbox.style.width = "1.45rem"; 
-  checkbox.checked = mod.enabled;
-  checkbox.addEventListener("change", function () {
-    mod.enabled = checkbox.checked;
-    if (checkbox.checked) {
-      card.classList.remove("border-left-secondary");
-    } else {
-      card.classList.add("border-left-secondary");
-    }
-  });
-  checkboxCol.appendChild(checkbox);
-  
+  if (mod.enabled != null) {
+    // Create checkbox for enabling the mod
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.style.height = "1.45rem";
+    checkbox.style.width = "1.45rem";
+    checkbox.checked = mod.enabled;
+    checkbox.addEventListener("change", function () {
+      mod.enabled = checkbox.checked;
+      if (checkbox.checked) {
+        $(mod.modSpecificDiv).collapse("show");
+        card.classList.remove("border-left-secondary");
+        card.style.backgroundColor = "#4e73df0d";
+      } else {
+        $(mod.modSpecificDiv).collapse("hide");
+        card.classList.add("border-left-secondary");
+        card.style.backgroundColor = "";
+      }
+    });
+    checkboxCol.appendChild(checkbox);
+    row.appendChild(checkboxCol);
+    mod.modSpecificDiv.classList.add("collapse");
+  }
 
   // Create name column
   const nameCol = document.createElement("div");
@@ -64,29 +54,27 @@ function addModToUI(mod, modDiv) {
   nameText.textContent = mod.name;
   nameCol.appendChild(nameText);
 
-  // Create size column
-  const sizeCol = document.createElement("div");
-  sizeCol.classList.add("col-auto");
-  const sizeText = document.createElement("p");
-  sizeText.textContent = "Flash usage: " + mod.size + " Bytes";
-  sizeCol.appendChild(sizeText);
-
-  // Add columns to the row
-  row.appendChild(checkboxCol);
   row.appendChild(nameCol);
-  row.appendChild(sizeCol);
 
-    // Create description column
-    const descCol = document.createElement("div");
-    //descCol.classList.add("col");
-  
-    const descriptionText = document.createElement("p");
-    descriptionText.textContent = mod.description;
-    descCol.appendChild(descriptionText);
+  // Create size column if this mod.size is set
+  if (mod.size != null) {
+    const sizeCol = document.createElement("div");
+    sizeCol.classList.add("col-auto");
+    const sizeText = document.createElement("p");
+    sizeText.textContent = t("mod.common.flash-usage", { size: mod.size });
+    sizeCol.appendChild(sizeText);
+    row.appendChild(sizeCol);
+  }
+
+  const descriptionBox = document.createElement("div");
+
+  const descriptionText = document.createElement("p");
+  descriptionText.textContent = mod.description;
+  descriptionBox.appendChild(descriptionText);
 
   // Add the mod-specific div for custom inputs
   cardBody.appendChild(row);
-  cardBody.appendChild(descCol);
+  cardBody.appendChild(descriptionBox);
   cardBody.appendChild(mod.modSpecificDiv);
 
 
@@ -103,23 +91,22 @@ function showHiddenMods() {
   for (const mod of hiddenMods) {
     mod.classList.remove("d-none");
   }
-  log("Hidden mods shown. Please pay extra attention when using them.");
+  log(t("mod.common.hidden-mods-shown"));
 }
 
-
-
-var modClasses = []; // Will be populated in mods.js
-var modInstances = [];
+var modInstances;
 
 function modLoader() {
+  document.getElementById("modsContainer").innerHTML = ""; // Clear the mods container
+  modInstances = [];
   modClasses.forEach(ModClass => {
     const modInstance = new ModClass();
     modInstances.push(modInstance); // Add the instance to the array
     const modDiv = document.createElement("div");
     addModToUI(modInstance, modDiv);
     document.getElementById("modsContainer").appendChild(modDiv);
+    modInstance.modOuterDiv = modDiv;
   });
-  log("Patcher ready.");
 
   // for development purposes, add ?hidden to the url to always show hidden mods
   if (window.location.href.indexOf("?hidden") > -1) {
@@ -130,14 +117,19 @@ function modLoader() {
 }
 
 
-function applyMods(firmware) {
+function applyFirmwareMods(fw) {
   for (const modInstance of modInstances) {
     if (modInstance.enabled) {
-      firmware = modInstance.apply(firmware);
+      try {
+        modInstance.apply(fw, fw.symbolTable);
+        log(t("mod.common.mod-success", { name: modInstance.name }));
+      } catch (error) {
+        log(t("mod.common.mod-error", { name: modInstance.name, error: error.message }));
+        console.log(error);
+      }
     }
   }
-  log("Finished applying mods...");
-  return firmware;
+  log(t("mod.common.mods-applied"));
 }
 
 function log(message, replace = false) {
@@ -148,15 +140,15 @@ function log(message, replace = false) {
     const lastLineIndex = consoleArea.value.lastIndexOf('\n');
     consoleArea.value = consoleArea.value.substring(0, lastLineIndex) + '\n' + message;
   } else {
-  // Append the new message to the existing content and add a newline
+    // Append the new message to the existing content and add a newline
 
-  // If the console is empty, dont add a newline
-  if (consoleArea.value.length === 0) {
-    consoleArea.value = message;
-  } else {
+    // If the console is empty, dont add a newline
+    if (consoleArea.value.length === 0) {
+      consoleArea.value = message;
+    } else {
 
-  consoleArea.value += '\n' + message;
-  }
+      consoleArea.value += '\n' + message;
+    }
   }
 
   // Scroll to the bottom to show the latest message
@@ -186,6 +178,7 @@ function hexString(hexString) {
   }
   return byteArray;
 }
+const hex = hexString; // Alias for hexString
 
 /**
  * Converts a Uint8Array to a hexadecimal string, mostly for debugging purposes.
@@ -199,25 +192,24 @@ function uint8ArrayToHexString(uint8Array) {
     .join('');
 }
 
-
 /**
  * Replaces or appends a section in the firmware data with new data at the specified offset.
  * To append data to the firmware, use firmwareData.length as the offset. 
  * @param {Uint8Array} firmwareData - The original firmware Uint8array.
  * @param {Uint8Array} newData - The new data to replace the section with.
  * @param {number} offset - The offset where the section should be replaced. 
- * @returns {Uint8Array} - The updated firmware data with the section replaced.
  */
 function replaceSection(firmwareData, newData, offset) {
-  const updatedFirmwareData = new Uint8Array(Math.max(firmwareData.length, offset + newData.length));
+  const lengthDifference = newData.length - (firmwareData.length - offset);
 
-  updatedFirmwareData.set(firmwareData.subarray(0, offset));
-  updatedFirmwareData.set(newData, offset);
-  if (offset + newData.length < firmwareData.length) {
-    updatedFirmwareData.set(firmwareData.subarray(offset + newData.length), offset + newData.length);
+  if (lengthDifference > 0) {
+    firmwareData = new Uint8Array(firmwareData.length + lengthDifference);
+    firmwareData.set(firmwareData.subarray(0, offset));
+    firmwareData.set(newData, offset);
+  } else {
+    firmwareData.set(newData, offset);
+    firmwareData = firmwareData.subarray(0, firmwareData.length + lengthDifference);
   }
-
-  return updatedFirmwareData;
 }
 
 /**
@@ -260,25 +252,47 @@ function compareSection(array, section, offset) {
  * Adds an input field to a parent div with a label and default text.
  *
  * @param {HTMLElement} parentDiv - The parent div to which the input field will be added. Usually this.modSpecificDiv
- * @param {string} labelText - The label text (title) for the input field.
+ * @param {string|[string, string]} labelText - Plain string for left label or array with label text (title) for the left and right label.
  * @param {string} defaultText - The default text to pre-fill the input field with.
  * @returns {HTMLInputElement} - The created input element, assign it to a constant for later use. 
  */
 function addInputField(parentDiv, labelText, defaultValue) {
-  const formGroup = document.createElement("div");
-  formGroup.classList.add("form-group");
+  const inputGroup = document.createElement("div");
+  inputGroup.classList.add("input-group", "mb-1");
 
-  const label = document.createElement("label");
-  label.textContent = labelText;
-  formGroup.appendChild(label);
+  if (!Array.isArray(labelText)) {
+    labelText = [labelText, null];
+  }
+
+  if (labelText[0] != null) {
+    const inputGroupPre = document.createElement("div");
+    inputGroupPre.classList.add("input-group-prepend");
+
+    const labell = document.createElement("span");
+    labell.classList.add("input-group-text");
+    labell.innerText = labelText[0];
+    inputGroupPre.appendChild(labell);
+    inputGroup.appendChild(inputGroupPre);
+  }
 
   const input = document.createElement("input");
   input.classList.add("form-control");
   input.type = "text";
   input.value = defaultValue; // Set the default value
-  formGroup.appendChild(input);
+  inputGroup.appendChild(input);
 
-  parentDiv.appendChild(formGroup);
+  if (labelText[1] != null) {
+    const inputGroupApp = document.createElement("div");
+    inputGroupApp.classList.add("input-group-append");
+
+    const labelr = document.createElement("span");
+    labelr.classList.add("input-group-text");
+    labelr.innerText = labelText[1];
+    inputGroupApp.appendChild(labelr);
+    inputGroup.appendChild(inputGroupApp);
+  }
+
+  parentDiv.appendChild(inputGroup);
 
   return input; // Return the input element
 }
@@ -294,7 +308,7 @@ function addInputField(parentDiv, labelText, defaultValue) {
  */
 function addRadioButton(parentDiv, labelText, id, name) {
   const formCheckDiv = document.createElement("div");
-  formCheckDiv.classList.add("form-check", "mt-2");
+  formCheckDiv.classList.add("form-check", "mb-1");
 
   const inputElement = document.createElement("input");
   inputElement.classList.add("form-check-input");

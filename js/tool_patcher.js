@@ -1,117 +1,216 @@
-const useDefaultFirmwareCheckbox = document.getElementById('useDefaultFirmware');
+const useStockFirmwareCheckbox = document.getElementById('useStockFirmware');
 const customFileInputDiv = document.getElementById('customFileInputDiv');
 const customFileInput = document.getElementById('customFileInput');
 const customFileLabel = document.getElementById('customFileLabel');
-const useDefaultFirmwareSpan = document.getElementById('useDefaultFirmwareSpan');
-const useDefaultFirmwareDiv = document.getElementById('useDefaultFirmwareDiv');
+const stockFirmwareSelect = document.getElementById('stockFirmwareSelect');
+const useStockFirmwareDiv = document.getElementById('useStockFirmwareDiv');
 const flashButton = document.getElementById('flashButton');
-
-// Function to toggle checkbox and update UI
-function toggleCheckbox() {
-    useDefaultFirmwareCheckbox.checked = !useDefaultFirmwareCheckbox.checked;
-
-    if (useDefaultFirmwareCheckbox.checked) {
-        customFileInputDiv.classList.add('d-none');
-        useDefaultFirmwareSpan.classList.remove('d-none');
-    } else {
-        customFileInputDiv.classList.remove('d-none');
-        useDefaultFirmwareSpan.classList.add('d-none');
-    }
-}
+const patchButton = document.getElementById('patchButton');
+const downloadButton = document.getElementById('downloadButton');
+const patchVersionSelect = document.getElementById('patchVersionSelect');
 
 // Click event listener for the div
-useDefaultFirmwareDiv.addEventListener('click', function (event) {
-    // Check if the click occurred on the checkbox or the label, and toggle accordingly
-    if (
-        event.target === useDefaultFirmwareCheckbox ||
-        event.target === useDefaultFirmwareDiv.querySelector('.input-group-text')
-    ) {
-        toggleCheckbox();
+useStockFirmwareDiv.addEventListener('click', function (event) {
+    useStockFirmwareCheckbox.checked = !useStockFirmwareCheckbox.checked;
+    flashButton.classList.add('disabled');
+    firmware.clear();
+
+    if (useStockFirmwareCheckbox.checked) {
+        customFileInputDiv.classList.add('d-none');
+        stockFirmwareSelect.classList.remove('d-none');
+        loadFirmware();
+    } else {
+        customFileInputDiv.classList.remove('d-none');
+        stockFirmwareSelect.classList.add('d-none');
+        if (customFileInput.files.length > 0) loadFirmware();
     }
 });
 
-// Change event listener for the checkbox to update the UI
-useDefaultFirmwareCheckbox.addEventListener('change', function () {
-    toggleCheckbox();
+stockFirmwareSelect.addEventListener('change', function () {
+    patchButton.classList.remove('disabled');
+    loadFirmware();
 });
 
 // Update text to show filename after file selection
 customFileInput.addEventListener('change', function () {
-    // Check if a file is selected
     if (this.files.length > 0) {
-        // Get the name of the selected file and update the label text
-        customFileLabel.textContent = this.files[0].name;
-    } else {
-        // If no file is selected, reset the label text
-        customFileLabel.textContent = 'Select own firmware (v26 only)';
+        customFileLabel.textContent = Array.from(this.files).map(file => file.name).join(', ');
+        loadFirmware();
+        return;
     }
+    customFileLabel.textContent = i18next.t("button-firmware-browse-file");
+
 });
 
+function disableIncompatibleMods(disableAll = false) {
+    // Disable mods that are incompatible with the loaded firmware
+    for (const modInstance of modInstances) {
+        if (modInstance.versionCheck(firmware.versionString) === true && !disableAll)
+            modInstance.modOuterDiv.removeAttribute('style');
+        else {
+            const modCheckbox = modInstance.modOuterDiv.querySelector('input[type="checkbox"]');
+            modCheckbox.checked = false;
+            modCheckbox.dispatchEvent(new Event('change'));
+            modInstance.modOuterDiv.style.opacity = 0.5;
+            modInstance.modOuterDiv.style.pointerEvents = 'none';
+        }
+    }
+}
 
-let rawVersion = null; // stores the raw version data for fwpack.js and qsflash.js
-let rawFirmware = null; // stores the raw firmware data for qsflash.js
+// function to parse a symbol file
+function parseSymFile(symFile) {
+    if (symFile[0] === '{') {
+        return JSON.parse(symFile);
+    }
+    const sym = {};
+    const lines = symFile.split('\n');
+    for (const line of lines) {
+        if (line.length === 0) continue;
+        const parts = line.split(' ');
+        const address = parseInt(parts[0], 16);
+        if (address >= 0x20000000) continue; // ignore addresses in ram
+        const name = parts[2];
+        sym[name] = address;
+    }
+    return sym;
+}
 
-document.getElementById('patchButton').addEventListener('click', function () {
-    log("");
-    const file = useDefaultFirmwareCheckbox.checked
-        ? fetch('fw/k5_v2.01.26_publish.bin')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.arrayBuffer();
-            })
-            .then((arrayBuffer) => new Uint8Array(arrayBuffer))
-        : new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                resolve(new Uint8Array(event.target.result));
-            };
-            reader.readAsArrayBuffer(customFileInput.files[0]);
-        });
+// ugly and bad code to load the firmware and symbols
+async function loadFirmware() {
+    patchButton.classList.add('disabled');
+    downloadButton.classList.add('disabled');
+    flashButton.classList.add('disabled');
+    firmware.clear();
 
-    file
-        .then((encoded_firmware) => {
-            const unpacked_firmware = unpack(encoded_firmware);
+    try {
+        if (useStockFirmwareCheckbox.checked) {
+            const response = await fetch(stockFirmwareSelect.value);
 
-            log(`Detected firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
-
-            // Adjust firmware version to allow cross flashing
-            const newVersionChar = document.getElementById("firmwareVersionSelect").value;
-            const newVersionCharCode = newVersionChar.charCodeAt(0);
-            rawVersion[0] = newVersionCharCode;
-            log(`Modified firmware version: ${new TextDecoder().decode(rawVersion.subarray(0, rawVersion.indexOf(0)))}`);
-
-            // Apply mods to unpacked firmware
-            const patched_firmware = applyMods(unpacked_firmware);
-
-            // Save raw firmware for qsflash.js
-            rawFirmware = patched_firmware;
-
-            // Check size
-            const current_size = patched_firmware.length;
-            const max_size = 0xEFFF;
-            const percentage = (current_size / max_size) * 100;
-            log(`Patched firmware uses ${percentage.toFixed(2)}% of available memory (${current_size}/${max_size} bytes).`);
-            if (current_size > max_size) {
-                log("WARNING: Firmware is too large and WILL NOT WORK!\nTry disabling mods that take up extra memory.");
+            if (!response.ok) {
+                throw new Error('Failed to fetch firmware file.');
             }
 
-            const packed_firmware = pack(patched_firmware);
+            const arrayBuffer = await response.arrayBuffer();
+            firmware.unpack(new Uint8Array(arrayBuffer));
+            log(i18next.t("log.loaded-firmware-version", { version: firmware.versionString }));
+            disableIncompatibleMods();
 
-            // Save encoded firmware to file
-            const fwPackedBlob = new Blob([packed_firmware]);
-            const fwPackedURL = URL.createObjectURL(fwPackedBlob);
-            const downloadButton = document.getElementById('downloadButton');
-            downloadButton.href = fwPackedURL;
-            downloadButton.download = 'fw_modded.bin'; // TODO: Generate name based on mods
-            downloadButton.classList.remove('disabled');
-            document.getElementById('flashButton').classList.remove('disabled');
-        })
-        .catch((error) => {
-            console.error(error);
-            log('Error while patching firmware, check log above or developer console for details.');
-        });
+            const symResponse = await fetch(stockFirmwareSelect.value.replace('.bin', '.json'));
+
+            if (!symResponse.ok) {
+                throw new Error('Failed to fetch symbol file.');
+            }
+
+            const symFile = await symResponse.text();
+            firmware.symbolTable = parseSymFile(symFile);
+            log(i18next.t("log.loaded-symbol-file", { count: Object.keys(firmware.symbolTable).length }));
+            console.log('Loaded symbol file.', firmware.symbolTable);
+            patchButton.classList.remove('disabled');
+        } else {
+            let firmwareFile = null, symbolFile = null;
+            for (const file of customFileInput.files) {
+                if (file.name.endsWith('.bin')) {
+                    firmwareFile = file;
+                }
+                if (file.name.endsWith('.txt' || file.name.endsWith('.json'))) {
+                    symbolFile = file;
+                }
+            }
+
+            if (firmwareFile === null) {
+                log(i18next.t("log.loaded-firmware-file-hint"));
+                throw new Error('No firmware file found.');
+            } else {
+                const arrayBuffer = await readFileAsArrayBuffer(firmwareFile);
+                firmware.unpack(new Uint8Array(arrayBuffer));
+                log(i18next.t("log.loaded-firmware-version", { version: firmware.versionString }));
+                disableIncompatibleMods();
+
+                if (symbolFile === null) {
+                    log(i18next.t("log.loaded-symbol-none"));
+                    disableIncompatibleMods(true);
+                } else {
+                    const symFile = await readFileAsText(symbolFile);
+                    firmware.symbolTable = parseSymFile(symFile);
+                    log(i18next.t("log.loaded-symbol-file", { count: Object.keys(firmware.symbolTable).length }));
+                    console.log('Loaded symbol file.', firmware.symbolTable);
+                }
+
+                patchButton.classList.remove('disabled');
+            }
+        }
+
+        return;
+    } catch (error) {
+        console.error(error);
+        log(i18next.t("log.loaded-firmware-error"));
+        firmware.clear();
+        return;
+    }
+}
+
+// Helper functions for reading files
+function readFileAsArrayBuffer(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+        reader.onerror = (event) => {
+            reject(event.error);
+        };
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            resolve(event.target.result);
+        };
+        reader.onerror = (event) => {
+            reject(event.error);
+        };
+        reader.readAsText(file);
+    });
+}
+
+
+
+patchButton.addEventListener('click', function () {
+    // Apply mods
+    firmware.rawFirmware = firmware.rawFirmwareBackup; // reset firmware
+    applyFirmwareMods(firmware);
+
+    // Check size
+    const current_size = firmware.rawFirmware.length;
+    const max_size = 0xEFFF;
+    const percentage = (current_size / max_size) * 100;
+    log(i18next.t("log.patched-firmware-size", { percentage: percentage.toFixed(2), current_size: current_size, max_size: max_size }));
+    if (current_size > max_size) {
+        log(i18next.t("log.patched-firmware-size-warning"));
+        downloadButton.classList.add('disabled');
+        flashButton.classList.add('disabled');
+        firmware.clear();
+        return;
+    }
+
+    // Adjust firmware version to allow cross flashing
+    const newVersionChar = patchVersionSelect.value;
+    const newVersionCharCode = newVersionChar.charCodeAt(0);
+    firmware.rawVersion[0] = newVersionCharCode;
+    log(i18next.t("log.patched-firmware-version", { version: new TextDecoder().decode(firmware.rawVersion.subarray(0, firmware.rawVersion.indexOf(0))) }));
+
+    const packed_firmware = firmware.pack();
+
+    // Save encoded firmware to file
+    const fwPackedBlob = new Blob([packed_firmware]);
+    const fwPackedURL = URL.createObjectURL(fwPackedBlob);
+    downloadButton.href = fwPackedURL;
+    downloadButton.download = 'fw_modded.bin';
+    downloadButton.classList.remove('disabled');
+    flashButton.classList.remove('disabled');
 });
 
 // flasher
@@ -140,7 +239,7 @@ async function flash_init(port) {
 function flash_checkVersion(dataPacket, versionFromFirmware) {
     const decoder = new TextDecoder();
     // print bootloader version as string, located at index 0x14
-    log(`Bootloader version: ${decoder.decode(dataPacket.slice(0x14, 0x14 + 7))}`);
+    log(i18next.t("log.bootloader-version", { version: decoder.decode(dataPacket.slice(0x14, 0x14 + 7)) }));
 
     // the radio accepts a * wildcard version, so we will do the same
     if (versionFromFirmware[0] == 0x2a) return true;
@@ -186,7 +285,7 @@ async function flash_flashFirmware(port, firmware) {
     // for loop to flash the firmware in 0x100 byte blocks
     // this loop is safe as long as the firmware file is smaller than 0xf000 bytes
     if (firmware.length > 0xefff) throw new Error('Last resort boundary check failed. Whoever touched the code is an idiot.');
-    log('Flashing... 0%')
+    log(i18next.t("log.flashing-percentage", { percentage: 0 }));
 
     for (let i = 0; i < firmware.length; i += 0x100) {
         const data = firmware.slice(i, i + 0x100);
@@ -196,28 +295,27 @@ async function flash_flashFirmware(port, firmware) {
             await sendPacket(port, command);
             await readPacket(port, 0x1a);
         } catch (e) {
-            log('Flash command rejected. Aborting.');
+            log(i18next.t("log.flashing-rejected"));
             return Promise.reject(e);
         }
-
-        log(`Flashing... ${((i / firmware.length) * 100).toFixed(1)}%`, true);
+        log(i18next.t("log.flashing-percentage", { percentage: ((i / firmware.length) * 100).toFixed(1) }), true);
     }
-    log('Flashing... 100%', true)
-    log('Successfully flashed firmware.');
+    log(i18next.t("log.flashing-percentage", { percentage: 100 }), true);
+    log(i18next.t("log.flashing-success"));
     return Promise.resolve();
 }
 
 flashButton.addEventListener('click', async function () {
     flashButton.classList.add('disabled');
-    if (rawFirmware.length > 0xefff) {
-        log('Firmware file is too large. Aborting.');
+    if (firmware.rawFirmware.length > 0xefff) {
+        log(i18next.t("log.flashing-oversize"));
         flashButton.classList.remove('disabled');
         return;
     }
-    log('Connecting to the serial port...');
+    log(i18next.t("log.flashing-connecting"));
     const port = await connect();
     if (!port) {
-        log('Failed to connect to the serial port.');
+        log(i18next.t("log.flashing-connecting-failed"));
         flashButton.classList.remove('disabled');
         return;
     }
@@ -227,31 +325,31 @@ flashButton.addEventListener('click', async function () {
         if (data[0] == 0x18) {
             console.log('Received 0x18 packet. Radio is ready for flashing.');
             console.log('0x18 packet data: ', data);
-            log('Radio in flash mode detected.');
+            log(i18next.t("log.flashing-radio-detected"));
 
             const response = await flash_init(port);
-            if (flash_checkVersion(response, rawVersion)) {
-                log('Version check passed.');
+            if (flash_checkVersion(response, firmware.rawVersion)) {
+                log(i18next.t("log.flashing-version-check-passed"));
             } else {
-                log('WARNING: Version check failed! Please select the correct version. Aborting.');
+                log(i18next.t("log.flashing-version-check-failed"));
                 return;
             }
-            log('Flashing firmware...');
-            await flash_flashFirmware(port, rawFirmware);
+            log(i18next.t("log.flashing-starting"));
+            await flash_flashFirmware(port, firmware.rawFirmware);
 
             return;
         } else {
             console.log('Received unexpected packet. Radio is not ready for flashing.');
-            log('Wrong packet received, is the radio in flash mode?');
+            log(i18next.t("log.flashing-unexpected-packet"));
             console.log('Data: ', data);
             return;
         }
     } catch (error) {
         if (error !== 'Reader has been cancelled.') {
             console.error('Error:', error);
-            log('Unusual error occured, check console for details.');
+            log(i18next.t("log.flashing-unusual-error"));
         } else {
-            log('No data received, is the radio connected and in flash mode? Please try again.');
+            log(i18next.t("log.flashing-radio-not-detected"));
         }
         return;
 
@@ -261,5 +359,7 @@ flashButton.addEventListener('click', async function () {
     }
 });
 
-
-modLoader(); // loads and shows all mods from mods.js
+function init() {
+    modLoader(); // loads and shows all mods from mods.js
+    loadFirmware(); // loads the firmware file and disables incompatible mods
+}

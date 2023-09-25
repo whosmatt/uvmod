@@ -1,9 +1,9 @@
-// the configurator tool works very similar to the patcher, where individual config sections are treated by mod-like instances with a read and write function
-
 const readConfigButton = document.getElementById('readConfigButton');
 const writeConfigButton = document.getElementById('writeConfigButton');
 const configContainer = document.getElementById('configContainer');
 const automaticBackupCheckbox = document.getElementById('automaticBackupCheckbox');
+const backupFileInput = document.getElementById('backupFileInput');
+const backupFileLabel = document.getElementById('backupFileLabel');
 
 async function eeprom_init(port) {
     // packet format: uint16 ID, uint16 length, uint32 timestamp
@@ -45,6 +45,31 @@ async function eeprom_reboot(port) {
     await sendPacket(port, packet);
 } 
 
+
+backupFileInput.addEventListener('change', function () {
+    if (this.files.length > 0) {
+        log('Loading backup file...');
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            // verify file size in case someone stupid puts in a firmware file
+            if (e.target.result.byteLength !== 0x2000) {
+                log('Invalid backup file. Read instructions!');
+                backupFileLabel.textContent = 'Import backup file';
+                return;
+            }
+            backupFileLabel.textContent = backupFileInput.files[0].name;
+            rawEEPROM = new Uint8Array(e.target.result);
+            log('Backup file loaded successfully.');
+            modLoader();
+        }
+        reader.readAsArrayBuffer(this.files[0]);
+
+    } else {
+        // If no file is selected, reset the label text
+        backupFileLabel.textContent = backupFileLabel.dataset.defaultText;
+    }
+});
+
 let rawEEPROM = new Uint8Array(0x2000);
 
 readConfigButton.addEventListener('click', async function () {
@@ -85,8 +110,9 @@ readConfigButton.addEventListener('click', async function () {
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
-
-
+        
+        modLoader();
+        return;
 
     } catch (error) {
         if (error !== 'Reader has been cancelled.') {
