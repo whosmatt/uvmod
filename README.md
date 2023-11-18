@@ -1,3 +1,8 @@
+# LOOKING FOR CONTRIBUTORS
+There is a partially finished dev version of UVMOD with many new features, including symbol file based universal patcher and eeprom editor. However, bringing it to release takes more time that I can spare at the moment. Please reach out if you are interested in contributing to the project.  
+That being said, the uv-k5 modding scene is not particularly active anymore, so interest is limited. 
+
+
 # [CLICK HERE TO OPEN UVMOD](https://whosmatt.github.io/uvmod/)
 ## [中文版 Open Chinese Version (maintained independently)](https://uvmod.xanyi.eu.org/)
 ## [Open Russian Version (maintained independently)](https://uvmod.valek.net.ru/)
