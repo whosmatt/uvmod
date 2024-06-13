@@ -178,7 +178,7 @@ function flash_generateCommand(data, address, totalSize) {
     const length_msb = 0x01;
     const length_lsb = 0x00;
 
-    return new Uint8Array([0x19, 0x5, 0xc, 0x1, 0x8a, 0x8d, 0x9f, 0x1d, address_msb, address_lsb, address_final_msb, address_final_lsb, length_msb, length_lsb, 0x0, 0x0, ...data]);
+    return new Uint8Array([0x19, 0x5, 0xc, 0x1, 0x8a, 0x8d, 0x9f, 0x1d, address_msb, address_lsb, address_final_msb, address_final_lsb, length_lsb, length_msb, 0x0, 0x0, ...data]); // notice the inconsistent byte order as observed in the official updater tool
 }
 
 // function to flash the firmware file to the radio
