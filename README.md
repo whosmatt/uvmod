@@ -42,7 +42,7 @@ UVMOD makes it easy and accessible for anyone without any background knowledge t
 UVMOD is designed to hide all high-risk mods behind a information section in the instructions to ensure that users are aware of the risks and consequences.  
 
 __Sadly, there has been one person (RE3CON) who has cloned UVMOD and removed all of the safety precautions and warnings.__ The team behind UVMOD and the Quansheng modding scene do not condone this behavior and we strongly advise against using this clone.  
-__Use the links at the top of this file to access all approved versions.__
+__Use the links at the top of this file to access known safe versions.__
 
 ## Code of Conduct
 
@@ -52,8 +52,6 @@ To accomplish this:
 - Mods are considered dangerous when they can be abused to break the law or cause harm to others.
 - Mods that are considered dangerous must be hidden using the this.hidden property.
 - Mods that are considered dangerous must have a clear description and an unambiguous title.  
-
-Failing to follow the rules above on a fork/clone of the main project may result in a negative public statement and/or a DMCA takedown request from the contributors involved.  
 
 To further improve the quality of the main project, we also ask that you:
 - Only include mods that function correctly and have been tested.  
